@@ -1,0 +1,107 @@
+-# This is a default template ToS and Privacy Policy for diaspora* pods.
+-# If you want to modify (or completely rewrite) these terms, create a
+-# file called app/views/terms/terms.haml or app/views/terms/terms.erb
+-# Once created, that file will be used automatically instead of this one.
+-#
+-# NOTE! The default terms have not been checked over by a lawyer and
+-# thus are unlikely to provide full legal protection for all situations
+-# for a podmin using them. They are also not specific to all countries
+-# and jurisdictions. If you are unsure, please check with a lawyer.
+-# We provide these for podmins as some basic rules that podmins
+-# can communicate to users easily via the diaspora* server software.
+
+/ These terms of service and privacy policy documents have been forked
+/ from the App.Net ToS repository (https://github.com/appdotnet/terms-of-service).
+/ The terms of use and privacy policy are available to you under the 
+/ CC BY-SA 3.0 Creative Commons license.
+/ If you modify or copy this file, please do not remove this license text.
+
+%div{:class => "container-fluid", :style => "margin-top: 50px;"}
+  %div{:class => "row-fluid"}
+    %div{:class => "span3"}
+      %h3
+        Impressum, Nutzungsbedingungen und Datenschutz
+      %h4
+        %a{:href => "/terms#imprint"}
+          Impressum
+      %h4
+        %a{:href => "/terms#tos"}
+          Nutzungsbedingungen
+      %h4
+        %a{:href => "/terms#privacy"}
+          Datenschutz
+    %div{:class => "span9", :style => "margin-top: 20px;"}
+      %a{:name => "imprint"}
+      %h1
+        Betreiberinformationen gemäß § 5 TMG
+
+      %p
+        Jonathan Reisdorf<br />
+        Danziger Str. 211<br />
+        10407 Berlin<br />
+        <br />
+        E-Mail: webmaster@berlinspora.de
+
+
+      %a{:name => "tos"}
+      %h1
+        Nutzungsbedingungen
+
+      %h2
+        1. Vorwort
+
+      %p
+        #{AppConfig.settings.pod_name} ist eine Installation der Software des Diaspora-Projektes. Der Quellcode der Software ist für jeden offen zugänglich und kann eingesehen, heruntergeladen, genutzt und verteilt werden.
+      %p
+        Diaspora ist ein dezentrales soziales Netzwerk, welches Nutzern erlaubt, Inhalte miteinander zu teilen, Informationen auszutauschen und Spaß zu haben.
+
+      %h2
+        2. Haftung für Inhalte, Links und alles andere
+
+      %p
+        Der Betreiber der Plattform möchte einen freien Informationsaustausch gewährleisten. Die Haftung für Inhalte, die durch Nutzer erstellt werden - Beiträge, Nachrichten und mehr - liegt beim Nutzer. Der Betreiber ist keinesfalls haftbar.
+      %p
+        Die Nutzer werden gebeten, keine Inhalte zu veröffentlichen, die gegen in der Bundesrepublik Deutschland anwendbares Recht verstoßen. Sollten Inhalte gegen Gesetze verstoßen und wird der Betreiber darauf aufmerksam gemacht, wird der Betreiber den Nutzer, auch öffentlich, kontaktieren und um Klärung des Problems und ggf. die Löschung der Inhalte bitten. Sollte keine andere Möglichkeit bestehen, wird der Betreiber die Inhalte löschen.
+      %p
+        Bisher durch den Betreiber oder nach Aufforderung des Betreibers gelöschte Inhalte: Keine.
+
+      %h2
+        3. Haftung für Ausfälle und Datenverlust
+
+      %p
+        Der Betreiber gibt sich Mühe, die Plattform möglichst unterbrechungs- und verlustfrei zu betreiben. Hierfür wird allerdings keinerlei Haftung übernommen.
+
+      %h2
+        4. Urheberrecht
+
+      %p
+        Das Urheberrecht für Texte, Bilder und sonstige Medien, die ein Benutzer auf #{AppConfig.settings.pod_name} hochladen kann, bleibt beim Nutzer. Eine Übertragung auf den Betreiber des Pods findet nicht statt.
+      %p
+        Sollte ein Nutzer wissentlich oder unwissentlich gegen gültiges Urheberrecht verstoßen, ist dieser darauf hinzuweisen. Entsprechende Kontaktdaten können beim Anbieter erfragt werden.
+
+      %a{:name => "privacy"}
+      %h1
+        Datenschutz
+
+      %p
+        Dem Betreiber ist es wichtig, die Daten der Nutzer zu schützen. Es werden keinerlei Daten durch den Anbieter ausgewertet oder an dritte Personen weitergegeben, außer die Weitergabe wird rechtlich erzwungen. In einem solchen Fall können folgende Daten weitergegeben werden:
+
+      %ul
+        %li
+          Benutzername
+        %li
+          E-Mail-Adresse
+        %li
+          IP-Adresse und Zeitpunkt der letzten Anmeldung
+
+      %p
+        Für Daten, die an andere Diaspora-Pods oder an externe Dienste wie Twitter gesendet werden, kann der Betreiber keinerlei Aussagen treffen. Hier sind die Datenschutzbestimmungen der jeweiligen Plattform zu beachten.
+
+      %p
+        Leider ist nichts perfekt, auch Diaspora nicht. Der Betreiber kann daher nicht ausschließen, dass Daten durch Sicherheitslücken und Angriffe auf die Systeme abgegriffen werden. Im Falle eines Datenverlustes wird der Anbieter die Nutzer darüber informieren.
+
+      %h1
+        Hinweise
+
+      %p
+        Diese Nutzungsbedingungen basieren auf der Vorlage des Geraspora Teams, welche unter der CC-BY veröffentlicht wurde: <a href="https://github.com/geraspora/german-terms-of-service" target="_blank">https://github.com/geraspora/german-terms-of-service</a>
