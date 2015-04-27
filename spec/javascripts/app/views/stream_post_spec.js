@@ -42,6 +42,14 @@ describe("app.views.StreamPost", function(){
       "ob_type": "article"
     };
 
+    var open_graph_cache_extralong = {
+      "url": "http://example.com/articles/123",
+      "title": "Example title",
+      "description": Array(62).join("Test description"), // 992 chars
+      "image": "http://example.com/thumb.jpg",
+      "ob_type": "article"
+    };
+
     beforeEach(function(){
       loginAs({name: "alice", avatar : {small : "http://avatar.com/photo.jpg"}});
 
@@ -114,6 +122,12 @@ describe("app.views.StreamPost", function(){
         var view = new app.views.StreamPost({model : this.statusMessage}).render();
         expect(view.$el.html()).not.toContain(open_graph_cache.title)
       })
+      it("truncates long opengraph descriptions in stream view to be 250 chars or less", function() {
+        this.statusMessage.set({"open_graph_cache" : open_graph_cache_extralong});
+
+        var view = new app.views.StreamPost({model : this.statusMessage}).render();
+        expect(view.$el.find('.og-description').html().length).toBeLessThan(251);
+      });
     })
 
     context("user not signed in", function(){
@@ -174,12 +188,12 @@ describe("app.views.StreamPost", function(){
       })
 
       it("destroys the view when they delete a their post from the show page", function(){
-        spyOn(window, "confirm").andReturn(true);
+        spyOn(window, "confirm").and.returnValue(true);
 
         this.view.$(".remove_post").click();
 
         expect(window.confirm).toHaveBeenCalled();
-        expect(this.view).not.toExist();
+        expect(this.view.el).not.toBeInDOM();
       })
     })
 

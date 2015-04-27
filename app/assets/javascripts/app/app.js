@@ -1,3 +1,5 @@
+// @license magnet:?xt=urn:btih:0b31508aeb0634b347b8270c7bee4d411b5d4109&dn=agpl-3.0.txt AGPL-v3-or-Later
+
 //= require_self
 //= require_tree ./helpers
 
@@ -11,6 +13,8 @@
 //= require_tree ./pages
 //= require_tree ./collections
 //= require_tree ./views
+
+//= require perfect-scrollbar
 
 var app = {
   collections: {},
@@ -33,11 +37,6 @@ var app = {
   user: function(userAttrs) {
     if(userAttrs) { return this._user = new app.models.User(userAttrs) }
     return this._user || false
-  },
-
-  baseImageUrl: function(baseUrl){
-    if(baseUrl) { return this._baseImageUrl = baseUrl }
-    return this._baseImageUrl || "assets/"
   },
 
   initialize: function() {
@@ -89,8 +88,8 @@ var app = {
   },
 
   setupFacebox: function() {
-    $.facebox.settings.closeImage = app.baseImageUrl()+'facebox/closelabel.png';
-    $.facebox.settings.loadingImage = app.baseImageUrl()+'facebox/loading.gif';
+    $.facebox.settings.closeImage = ImagePaths.get('facebox/closelabel.png');
+    $.facebox.settings.loadingImage = ImagePaths.get('facebox/loading.gif');
     $.facebox.settings.opacity = 0.75;
   },
 
@@ -132,3 +131,5 @@ var app = {
 $(function() {
   app.initialize();
 });
+// @license-end
+

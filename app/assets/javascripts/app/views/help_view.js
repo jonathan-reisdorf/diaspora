@@ -1,3 +1,5 @@
+// @license magnet:?xt=urn:btih:0b31508aeb0634b347b8270c7bee4d411b5d4109&dn=agpl-3.0.txt AGPL-v3-or-Later
+
 app.views.Help = app.views.StaticContentView.extend({
   templateName : "help",
 
@@ -6,6 +8,7 @@ app.views.Help = app.views.StaticContentView.extend({
     "click .faq-link-getting-help" : "gettingHelp",
     "click .faq-link-sharing" : "sharing",
     "click .faq-link-posts-and-posting" : "postsAndPosting",
+    "click .faq-link-tags": "tags",
     "click .faq-link-keyboard-shortcuts" : "keyboardShortcuts",
   },
 
@@ -23,6 +26,12 @@ app.views.Help = app.views.StaticContentView.extend({
       format_text_a: {
         markdown: this.linkHtml("http://diasporafoundation.org/formatting", Diaspora.I18n.t( 'markdown' )),
         here: this.linkHtml("http://daringfireball.net/projects/markdown/syntax", Diaspora.I18n.t( 'here' )),
+      }
+    };
+
+    this.TAGS_SUBS = {
+      filter_tags_a: {
+        third_party_tools: this.linkHtml("https://wiki.diasporafoundation.org/Tools_to_use_with_Diaspora", Diaspora.I18n.t( 'third_party_tools' )),
       }
     };
 
@@ -145,6 +154,13 @@ app.views.Help = app.views.StaticContentView.extend({
     e.preventDefault();
   },
 
+  tags: function(e) {
+    this.renderStaticSection("tags", "faq_tags", this.TAGS_SUBS);
+    this.menuClicked(e);
+
+    e.preventDefault();
+  },
+
   keyboardShortcuts: function(e) {
     this.renderStaticSection("keyboard_shortcuts", "faq_keyboard_shortcuts", {});
     this.menuClicked(e);
@@ -156,3 +172,5 @@ app.views.Help = app.views.StaticContentView.extend({
     return "<a href=\"" + url + "\" target=\"_blank\">" + text + "</a>";
   },
 });
+// @license-end
+

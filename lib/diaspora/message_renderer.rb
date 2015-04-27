@@ -36,12 +36,9 @@ module Diaspora
         message << options[:append_after_truncate].to_s
       end
 
-      include ActionView::Helpers::TagHelper
       def escape
         if options[:escape]
-          # TODO: On Rails 4 port change this to ERB::Util.html_escape_once
-          # and remove the include
-          @message = escape_once message
+          @message = ERB::Util.html_escape_once message
 
           # Special case Hex entities since escape_once
           # doesn't catch them.
@@ -89,6 +86,10 @@ module Diaspora
 
       def render_tags
         @message = Diaspora::Taggable.format_tags message, no_escape: !options[:escape_tags]
+      end
+
+      def camo_urls
+        @message = Diaspora::Camo.from_markdown(@message)
       end
     end
 
@@ -169,6 +170,13 @@ module Diaspora
     end
 
     # @param [Hash] opts Override global output options, see {#initialize}
+    def plain_text_for_json opts={}
+      process(opts) {
+        camo_urls if AppConfig.privacy.camo.proxy_markdown_images?
+      }
+    end
+
+    # @param [Hash] opts Override global output options, see {#initialize}
     def html opts={}
       process(opts) {
         escape
@@ -183,6 +191,7 @@ module Diaspora
     def markdownified opts={}
       process(opts) {
         process_newlines
+        camo_urls if AppConfig.privacy.camo.proxy_markdown_images?
         markdownify
         render_mentions
         render_tags
@@ -214,6 +223,12 @@ module Diaspora
       else
         plain_text_without_markdown squish: true, truncate: opts.fetch(:length, 20)
       end
+    end
+
+    # Extracts all the urls from the raw message and return them in the form of a string
+    # Different URLs are seperated with a space
+    def urls
+      @urls ||= Twitter::Extractor.extract_urls(plain_text_without_markdown)
     end
 
     def raw

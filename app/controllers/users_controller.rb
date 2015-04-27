@@ -3,8 +3,8 @@
 #   the COPYRIGHT file.
 
 class UsersController < ApplicationController
-  before_filter :authenticate_user!, :except => [:new, :create, :public, :user_photo]
-  before_filter -> { @css_framework = :bootstrap }, only: [:privacy_settings, :edit]
+  before_action :authenticate_user!, :except => [:new, :create, :public, :user_photo]
+  before_action -> { @css_framework = :bootstrap }, only: [:privacy_settings, :edit]
 
   layout ->(c) { request.format == :mobile ? "application" : "with_header_with_footer" }, only: [:privacy_settings, :edit]
 
@@ -47,6 +47,12 @@ class UsersController < ApplicationController
           flash[:error] = I18n.t 'users.update.password_not_changed'
         end
       elsif u[:show_community_spotlight_in_stream] || u[:getting_started]
+        if @user.update_attributes(u)
+          flash[:notice] = I18n.t 'users.update.settings_updated'
+        else
+          flash[:notice] = I18n.t 'users.update.settings_not_updated'
+        end
+      elsif u[:strip_exif]
         if @user.update_attributes(u)
           flash[:notice] = I18n.t 'users.update.settings_updated'
         else
@@ -135,9 +141,14 @@ class UsersController < ApplicationController
     redirect_to stream_path
   end
 
-  def export
-    exporter = Diaspora::Exporter.new(Diaspora::Exporters::XML)
-    send_data exporter.execute(current_user), :filename => "#{current_user.username}_diaspora_data.xml", :type => :xml
+  def export_profile
+    current_user.queue_export
+    flash[:notice] = I18n.t('users.edit.export_in_progress')
+    redirect_to edit_user_path
+  end
+
+  def download_profile
+    send_data File.open(current_user.export.path).read, type: :json, filename: current_user.export.filename
   end
 
   def export_photos
@@ -177,6 +188,7 @@ class UsersController < ApplicationController
       :invitation_service,
       :invitation_identifier,
       :show_community_spotlight_in_stream,
+      :strip_exif,
       :auto_follow_back,
       :auto_follow_back_aspect_id,
       :remember_me,

@@ -16,7 +16,6 @@
         %params
           #publisher_textarea_wrapper
             = link_to(content_tag(:div, nil, :class => 'icons-deletelabel'), "#", :id => "hide_publisher", :title => t('shared.publisher.discard_post'))
-            %ul#photodropzone
             - if current_user.getting_started?
               = status.text_area :fake_text, :rows => 2, :value => h(publisher_formatted_text), :tabindex => 1, :placeholder => "#{t('contacts.index.start_a_conversation')}...",
                 :title => popover_with_close_html( '1. ' + t('shared.public_explain.share') ),
@@ -24,7 +23,7 @@
             - else
               = status.text_area :fake_text, :rows => 2, :value => h(publisher_formatted_text), :tabindex => 1, :placeholder => "#{t('contacts.index.start_a_conversation')}..."
             = status.hidden_field :text, :value => h(publisher_hidden_text), :class => 'clear_on_submit'
-
+            %ul#photodropzone
             %span#publisher-images
               %span.markdownIndications
                 != t('shared.publisher.formatWithMarkdown', markdown_link: link_to(t('help.markdown'), 'https://diasporafoundation.org/formatting', target: :blank))
@@ -37,7 +36,7 @@
                 = image_tag 'icons/camera.png', :alt => t('shared.publisher.upload_photos').titleize, :class => 'publisher_image'
             = hidden_field :location, :coords
           #location_container
-          #publisher-poll-creator
+          #poll_creator_container
 
       - if publisher_public
         = hidden_field_tag 'aspect_ids[]', "public"
@@ -66,13 +65,18 @@
           .dropdown{ ! current_user.getting_started? ? {:class => "hang_right"} : { :class => "hang_right", :title => popover_with_close_html("2. #{t('shared.public_explain.control_your_audience')}"), 'data-content'=> t('shared.public_explain.visibility_dropdown')} }
             .button.toggle.publisher
               - if publisher_public
-                = t('public')
-              - elsif all_aspects_selected?(selected_aspects)
-                = t('all_aspects')
-              - elsif selected_aspects.size == 1
-                = selected_aspects.first.name
+                %i#visibility-icon.entypo.small.globe
+                %span.text
+                  = t('public')
               - else
-                = t('shared.aspect_dropdown.toggle', :count => selected_aspects.size)
+                %i#visibility-icon.entypo.small.lock
+                %span.text
+                  - if all_aspects_selected?(selected_aspects)
+                    = t('all_aspects')
+                  - elsif selected_aspects.size == 1
+                    = selected_aspects.first.name
+                  - else
+                    = t('shared.aspect_dropdown.toggle', :count => selected_aspects.size)
               &#9660;
 
             .wrapper

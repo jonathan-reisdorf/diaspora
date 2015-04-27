@@ -1,3 +1,5 @@
+// @license magnet:?xt=urn:btih:0b31508aeb0634b347b8270c7bee4d411b5d4109&dn=agpl-3.0.txt AGPL-v3-or-Later
+
 /*   Copyright (c) 2010-2011, Diaspora Inc.  This file is
  *   licensed under the Affero General Public License version 3 or later.  See
  *   the COPYRIGHT file.
@@ -37,6 +39,9 @@
 
   Diaspora.BaseWidget = {
     instantiate: function(Widget, element) {
+      // Mobile version loads only some widgets
+      if (typeof Diaspora.Widgets[Widget] === 'undefined') return;
+
       $.extend(Diaspora.Widgets[Widget].prototype, Diaspora.EventBroker.extend(Diaspora.BaseWidget));
 
       var widget = new Diaspora.Widgets[Widget](),
@@ -93,3 +98,5 @@
 
 
 $(Diaspora.instantiatePage);
+// @license-end
+

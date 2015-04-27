@@ -5,10 +5,10 @@ class ServicesController < ApplicationController
   # We need to take a raw POST from an omniauth provider with no authenticity token.
   # See https://github.com/intridea/omniauth/issues/203
   # See also http://www.communityguides.eu/articles/16
-  skip_before_filter :verify_authenticity_token, :only => :create
-  before_filter :authenticate_user!
-  before_filter :abort_if_already_authorized, :abort_if_read_only_access, :only => :create
-  before_filter -> { @css_framework = :bootstrap }, only: [:index]
+  skip_before_action :verify_authenticity_token, :only => :create
+  before_action :authenticate_user!
+  before_action :abort_if_already_authorized, :abort_if_read_only_access, :only => :create
+  before_action -> { @css_framework = :bootstrap }, only: [:index]
 
   layout ->(c) { request.format == :mobile ? "application" : "with_header_with_footer" }, only: [:index]
 
@@ -23,9 +23,9 @@ class ServicesController < ApplicationController
     service = Service.initialize_from_omniauth( omniauth_hash )
     
     if current_user.services << service
-      current_user.update_profile_with_omniauth( service.info )
-
-      fetch_photo(service) if no_profile_image?
+      no_profile_image_before_update = no_profile_image?
+      current_user.update_profile_with_omniauth(service.info)
+      fetch_photo(service) if no_profile_image_before_update
 
       flash[:notice] = I18n.t 'services.create.success'
     else

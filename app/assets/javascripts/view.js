@@ -1,3 +1,5 @@
+// @license magnet:?xt=urn:btih:0b31508aeb0634b347b8270c7bee4d411b5d4109&dn=agpl-3.0.txt AGPL-v3-or-Later
+
 /*   Copyright (c) 2010-2011, Diaspora Inc.  This file is
  *   licensed under the Affero General Public License version 3 or later.  See
  *   the COPYRIGHT file.
@@ -21,7 +23,8 @@ var View = {
 
     /* Dropdowns */
     $(document)
-      .on('click', this.dropdowns.selector, this.dropdowns.click);
+      .on('click', this.dropdowns.selector, this.dropdowns.click)
+      .on('keypress', this.dropdowns.selector, this.dropdowns.click);
 
     /* Avatars */
     $(this.avatars.selector).error(this.avatars.fallback);
@@ -114,7 +117,7 @@ var View = {
 
   avatars: {
     fallback: function(evt) {
-      $(this).attr("src", "/assets/user/default.png");
+      $(this).attr("src", ImagePaths.get("user/default.png"));
     },
     selector: "img.avatar"
   }
@@ -123,3 +126,5 @@ var View = {
 $(function() {
   View.initialize();
 });
+// @license-end
+
