@@ -14,12 +14,12 @@ describe Salmon::EncryptedSlap do
     it 'makes the data in the signature encrypted with that key' do
       key_hash = {'key' => @created_salmon.aes_key, 'iv' => @created_salmon.iv}
       decoded_string = Salmon::EncryptedSlap.decode64url(@created_salmon.magic_sig.data)
-      expect(alice.aes_decrypt(decoded_string, key_hash)).to eq(@post.to_diaspora_xml)
+      alice.aes_decrypt(decoded_string, key_hash).should == @post.to_diaspora_xml
     end
 
     it 'sets aes and iv key' do
-      expect(@created_salmon.aes_key).not_to be_nil
-      expect(@created_salmon.iv).not_to be_nil
+      @created_salmon.aes_key.should_not be_nil
+      @created_salmon.iv.should_not be_nil
     end
   end
 
@@ -30,15 +30,15 @@ describe Salmon::EncryptedSlap do
     end
 
     it 'sets the author id' do
-      expect(@new_slap.author_id).to eq(alice.diaspora_handle)
+      @new_slap.author_id.should == alice.diaspora_handle
     end
 
     it 'sets the aes_key' do
-      expect(@new_slap.aes_key).to eq(@created_salmon.aes_key)
+      @new_slap.aes_key.should == @created_salmon.aes_key
     end
 
     it 'sets the aes_key' do
-      expect(@new_slap.iv).to eq(@created_salmon.iv)
+      @new_slap.iv.should == @created_salmon.iv
     end
   end
 
@@ -47,15 +47,15 @@ describe Salmon::EncryptedSlap do
     let(:parsed_salmon) { Salmon::EncryptedSlap.from_xml(xml, alice)}
 
     it 'should parse out the aes key' do
-      expect(parsed_salmon.aes_key).to eq(@created_salmon.aes_key)
+      parsed_salmon.aes_key.should == @created_salmon.aes_key
     end
 
     it 'should parse out the iv' do
-      expect(parsed_salmon.iv).to eq(@created_salmon.iv)
+      parsed_salmon.iv.should == @created_salmon.iv
     end
 
     it 'contains the original data' do
-      expect(parsed_salmon.parsed_data).to eq(@post.to_diaspora_xml)
+      parsed_salmon.parsed_data.should == @post.to_diaspora_xml
     end
   end
 
@@ -66,7 +66,7 @@ describe Salmon::EncryptedSlap do
 
     it 'has a encrypted header field' do
       doc = Nokogiri::XML(@xml)
-      expect(doc.find("encrypted_header")).not_to be_blank
+      doc.find("encrypted_header").should_not be_blank
     end
     
     context "encrypted header" do
@@ -77,15 +77,15 @@ describe Salmon::EncryptedSlap do
       end
 
       it 'contains the aes key' do
-        expect(@dh_doc.search('aes_key').map(&:text)).to eq([@created_salmon.aes_key])
+        @dh_doc.search('aes_key').map(&:text).should == [@created_salmon.aes_key]
       end
 
       it 'contains the initialization vector' do
-        expect(@dh_doc.search('iv').map(&:text)).to eq([@created_salmon.iv])
+        @dh_doc.search('iv').map(&:text).should == [@created_salmon.iv]
       end
 
       it 'contains the author id' do
-        expect(@dh_doc.search('author_id').map(&:text)).to eq([alice.diaspora_handle])
+        @dh_doc.search('author_id').map(&:text).should == [alice.diaspora_handle]
       end
     end
   end

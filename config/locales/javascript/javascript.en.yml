@@ -6,26 +6,20 @@
 en:
   javascripts:
     confirm_dialog: "Are you sure?"
-    confirm_unload: "Please confirm that you want to leave this page. Data you have entered won’t be saved."
     delete: "Delete"
     ignore: "Ignore"
     report:
       prompt: "Please enter a reason:"
-      prompt_default: "e.g. offensive content"
+      prompt_default: "offensive content"
       name: "Report"
       status:
-        created: "The report has successfully been created"
+        created: "The report was successfully created"
         exists: "The report already exists"
     ignore_user: "Ignore this user?"
     ignore_failed: "Unable to ignore this user"
-    hide_post: "Hide this post?"
-    hide_post_failed: "Unable to hide this post"
-    remove_post: "Remove this post?"
-    unblock_failed: "Unblocking this user has failed"
     and: "and"
     comma: ","
     edit: "Edit"
-    no_results: "No results found"
     timeago:
       prefixAgo: ""
       prefixFromNow: ""
@@ -44,18 +38,9 @@ en:
       years: "%d years"
       wordSeparator: " "
 
-    contacts:
-      add_contact: "Add contact"
-      aspect_list_is_visible: "Contacts in this aspect are able to see each other."
-      aspect_list_is_not_visible: "Contacts in this aspect are not able to see each other."
-      remove_contact: "Remove contact"
-      error_add: "Couldn’t add <%= name %> to the aspect :("
-      error_remove: "Couldn’t remove <%= name %> from the aspect :("
-      search_no_results: "No contacts found"
-
-    my_activity: "My activity"
+    my_activity: "My Activity"
     my_stream: "Stream"
-    my_aspects: "My aspects"
+    my_aspects: "My Aspects"
 
     videos:
       watch: "Watch this video on <%= provider %>"
@@ -63,8 +48,8 @@ en:
     search_for: "Search for <%= name %>"
     publisher:
       at_least_one_aspect: "You must publish to at least one aspect"
-      limited: "Limited: your post will only be seen by people you are sharing with"
-      public: "Public: your post will be visible to everyone and found by search engines"
+      limited: "Limited - your post will only be seen by people you are sharing with"
+      public: "Public - your post will be visible to everyone and found by search engines"
       near_from: "Posted from: <%= location %>"
       option: "Answer"
       add_option: "Add an answer"
@@ -82,24 +67,24 @@ en:
       all_aspects: "All aspects"
       stopped_sharing_with: "You have stopped sharing with <%= name %>."
       started_sharing_with: "You have started sharing with <%= name %>!"
-      error: "Couldn’t start sharing with <%= name %>.  Are you ignoring them?"
-      error_remove: "Couldn’t remove <%= name %> from the aspect :("
+      error: "Couldn't start sharing with <%= name %>.  Are you ignoring them?"
+      error_remove: "Couldn't remove <%= name %> from the aspect :("
       toggle:
         zero: "Select aspects"
         one: "In <%= count %> aspect"
         other: "In <%= count %> aspects"
-    show_more: "Show more"
+    show_more: "show more"
     failed_to_like: "Failed to like!"
     failed_to_post_message: "Failed to post message!"
     failed_to_remove: "Failed to remove the entry!"
     comments:
-      show: "Show all comments"
-      hide: "Hide comments"
+      show: "show all comments"
+      hide: "hide comments"
       no_comments: "There are no comments yet."
     reshares:
-      duplicate: "That good, eh?  You’ve already reshared that post!"
+      duplicate: "That good, huh?  You've already reshared that post!"
       successful: "The post was successfully reshared!"
-      post: "Reshare <%= name %>’s post?"
+      post: "Reshare <%= name %>'s post?"
     aspect_navigation:
       select_all: "Select all"
       deselect_all: "Deselect all"
@@ -107,8 +92,8 @@ en:
       add_an_aspect: "+ Add an aspect"
     getting_started:
       hey: "Hey, <%= name %>!"
-      no_tags: "Hey, you haven’t followed any tags!  Continue anyway?"
-      alright_ill_wait: "All right, I’ll wait."
+      no_tags: "Hey, you haven't followed any tags!  Continue anyway?"
+      alright_ill_wait: "Alright, I'll wait."
       preparing_your_stream: "Preparing your personalized stream..."
     photo_uploader:
       looking_good: "OMG, you look awesome!"
@@ -118,28 +103,9 @@ en:
       size_error: "{file} is too large, maximum file size is {sizeLimit}."
       empty: "{file} is empty, please select files again without it."
     tags:
-      wasnt_that_interesting: "OK, I suppose #<%= tagName %> wasn’t all that interesting..."
+      wasnt_that_interesting: "OK, I suppose #<%= tagName %> wasn't all that interesting..."
     people:
-      not_found: "... and no one was found"
-      mention: "Mention"
-      message: "Message"
-      edit_my_profile: "Edit my profile"
-      stop_ignoring: "Stop ignoring"
-      helper:
-        is_sharing: "<%= name %> is sharing with you"
-        is_not_sharing: "<%= name %> is not sharing with you"
-    profile:
-      edit: "Edit"
-      add_some: "Add some"
-      you_have_no_tags: "You have no tags!"
-      ignoring: "You are ignoring all posts from <%= name %>."
-      bio: "Bio"
-      location: "Location"
-      gender: "Gender"
-      born: "Birthday"
-      photos: "Photos"
-      contacts: "Contacts"
-      posts: "Posts"
+      not_found: "and no one was found..."
 
     conversation:
       participants: "Participants"
@@ -156,7 +122,7 @@ en:
       unlike: "Unlike"
       reshare: "Reshare"
       comment: "Comment"
-      original_post_deleted: "Original post deleted by author"
+      original_post_deleted: "Original post deleted by author."
       show_nsfw_post: "Show post"
       show_nsfw_posts: "Show all"
       hide_nsfw_posts: "Hide #nsfw posts"
@@ -180,7 +146,7 @@ en:
         other: "Show <%= count %> more comments"
 
       followed_tag:
-        title: "#Followed tags"
+        title: "#Followed Tags"
         contacts_title: "People who dig these tags"
         add_a_tag: "Add a tag"
         follow: "Follow"
@@ -188,7 +154,7 @@ en:
       tags:
         follow: "Follow #<%= tag %>"
         following: "Following #<%= tag %>"
-        stop_following: "Stop following #<%= tag %>"
+        stop_following: "Stop Following #<%= tag %>"
 
     header:
       home: "Home"
@@ -204,10 +170,10 @@ en:
 
       search: "Search"
 
-      recent_notifications: "Recent notifications"
+      recent_notifications: "Recent Notifications"
       mark_all_as_read: "Mark all as read"
       view_all: "View all"
-      close: "Close"
+      close: "close"
 
     viewer:
       stop_following_post: "Stop following post"
@@ -217,7 +183,7 @@ en:
       reshare: "Reshare"
       reshared: "Reshared"
       comment: "Comment"
-      home: "Home"
+      home: "HOME"
 
     poll:
       vote: "Vote"

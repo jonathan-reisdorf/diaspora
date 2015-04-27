@@ -4,7 +4,7 @@
 #
 
 class AspectMembershipsController < ApplicationController
-  before_action :authenticate_user!
+  before_filter :authenticate_user!
 
   respond_to :html, :json
 
@@ -31,10 +31,13 @@ class AspectMembershipsController < ApplicationController
       flash.now[:error] = I18n.t 'aspect_memberships.destroy.failure'
     end
 
-    respond_to do |format|
+    respond_with do |format|
       format.json do
         if success
-          render :json => AspectMembershipPresenter.new(membership).base_hash
+          render :json => {
+            :person_id  => contact.person_id,
+            :aspect_ids => contact.aspects.map{|a| a.id}
+          }
         else
           render :text => membership.errors.full_messages, :status => 403
         end
@@ -54,9 +57,7 @@ class AspectMembershipsController < ApplicationController
       flash.now[:notice] =  I18n.t('aspects.add_to_aspect.success')
       respond_with do |format|
         format.json do
-          render :json => AspectMembershipPresenter.new(
-            AspectMembership.where(:contact_id => @contact.id, :aspect_id => @aspect.id).first)
-          .base_hash
+          render :json => AspectMembership.where(:contact_id => @contact.id, :aspect_id => @aspect.id).first.to_json
         end
 
         format.all { redirect_to :back }

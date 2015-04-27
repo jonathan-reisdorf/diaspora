@@ -4,20 +4,14 @@
 
 class LikesController < ApplicationController
   include ApplicationHelper
-  before_action :authenticate_user!
+  before_filter :authenticate_user!
 
   respond_to :html,
              :mobile,
              :json
 
   def create
-    begin
-      @like = if target
-        current_user.like!(target)
-      end
-    rescue ActiveRecord::RecordNotFound, ActiveRecord::RecordInvalid => e
-      # do nothing
-    end
+    @like = current_user.like!(target) if target rescue ActiveRecord::RecordInvalid
 
     if @like
       respond_to do |format|

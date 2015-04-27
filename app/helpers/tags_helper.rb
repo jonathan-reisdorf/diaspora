@@ -1,16 +1,17 @@
 module TagsHelper
   def looking_for_tag_link
-    return if search_query.include?('@') || normalize_tag_name(search_query).blank?
+    return if search_query.include?('@') || normalized_tag_name.blank?
     content_tag('small') do
-      t('people.index.looking_for', tag_link: tag_link(search_query)).html_safe
+      t('people.index.looking_for', :tag_link => tag_link).html_safe
     end
   end
 
-  def normalize_tag_name(tag)
-    ActsAsTaggableOn::Tag.normalize(tag.to_s)
+  def normalized_tag_name
+    ActsAsTaggableOn::Tag.normalize(search_query)
   end
 
-  def tag_link(tag)
-    link_to("##{tag}", tag_path(name: normalize_tag_name(tag)))
+  def tag_link
+    tag = normalized_tag_name
+    link_to("##{tag}", tag_path(:name => tag))
   end
 end

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Services::Tumblr, :type => :model do
+describe Services::Tumblr do
 
   before do
     @user = alice
@@ -12,16 +12,16 @@ describe Services::Tumblr, :type => :model do
   describe '#post' do
     it 'posts a status message to tumblr and saves the returned ids' do
       response = double(body: '{"response": {"user": {"blogs": [{"url": "http://foo.tumblr.com"}]}}}')
-      expect_any_instance_of(OAuth::AccessToken).to receive(:get)
+      OAuth::AccessToken.any_instance.should_receive(:get)
       .with("/v2/user/info")
       .and_return(response)
 
       response = double(code: "201", body: '{"response": {"id": "bla"}}')
-      expect_any_instance_of(OAuth::AccessToken).to receive(:post)
+      OAuth::AccessToken.any_instance.should_receive(:post)
       .with("/v2/blog/foo.tumblr.com/post", @service.build_tumblr_post(@post, ''))
       .and_return(response)
 
-      expect(@post).to receive(:tumblr_ids=).with({"foo.tumblr.com" => "bla"}.to_json)
+      @post.should_receive(:tumblr_ids=).with({"foo.tumblr.com" => "bla"}.to_json)
 
       @service.post(@post)
     end

@@ -4,7 +4,7 @@
 
 require 'spec_helper'
 
-describe Mention, :type => :model do
+describe Mention do
   describe "#notify_recipient" do
     before do
       @user = alice
@@ -14,12 +14,12 @@ describe Mention, :type => :model do
 
     it 'notifies the person being mentioned' do
       sm = @user.build_post(:status_message, :text => "hi @{#{bob.name}; #{bob.diaspora_handle}}", :to => @user.aspects.first)
-      expect(Notification).to receive(:notify).with(bob, anything(), sm.author)
+      Notification.should_receive(:notify).with(bob, anything(), sm.author)
       sm.receive(bob, alice.person)
     end
 
     it 'should not notify a user if they do not see the message' do
-      expect(Notification).not_to receive(:notify).with(alice, anything(), bob.person)
+      Notification.should_not_receive(:notify).with(alice, anything(), bob.person)
       sm2 = bob.build_post(:status_message, :text => "stuff @{#{alice.name}; #{alice.diaspora_handle}}", :to => bob.aspects.first)
       sm2.receive(eve, bob.person)
     end
@@ -27,7 +27,7 @@ describe Mention, :type => :model do
 
   describe '#notification_type' do
     it "returns 'mentioned'" do
-     expect(Mention.new.notification_type).to eq(Notifications::Mentioned)
+     Mention.new.notification_type.should == Notifications::Mentioned
     end
   end
 
@@ -40,9 +40,9 @@ describe Mention, :type => :model do
       @m  = Mention.create!(:person => @mentioned_user.person, :post => @sm)
       @m.notify_recipient
 
-      expect{
+      lambda{
         @m.destroy
-      }.to change(Notification, :count).by(-1)
+      }.should change(Notification, :count).by(-1)
     end
   end
 end

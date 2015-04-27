@@ -26,29 +26,19 @@ class Post < ActiveRecord::Base
   belongs_to :o_embed_cache
   belongs_to :open_graph_cache
 
-  validates_uniqueness_of :id
-
-  after_create do
+  after_commit :on => :create do
     self.touch(:interacted_at)
   end
 
   #scopes
-  scope :includes_for_a_stream, -> {
-    includes(:o_embed_cache,
-             :open_graph_cache,
-             {:author => :profile},
-             :mentions => {:person => :profile}
-    ) #note should include root and photos, but i think those are both on status_message
+  scope :includes_for_a_stream, includes(:o_embed_cache, :open_graph_cache, {:author => :profile}, :mentions => {:person => :profile}) #note should include root and photos, but i think those are both on status_message
+
+
+  scope :commented_by, lambda { |person|
+    select('DISTINCT posts.*').joins(:comments).where(:comments => {:author_id => person.id})
   }
 
-
-  scope :commented_by, ->(person)  {
-    select('DISTINCT posts.*')
-      .joins(:comments)
-      .where(:comments => {:author_id => person.id})
-  }
-
-  scope :liked_by, ->(person) {
+  scope :liked_by, lambda { |person|
     joins(:likes).where(:likes => {:author_id => person.id})
   }
 
@@ -87,7 +77,7 @@ class Post < ActiveRecord::Base
 
   def self.excluding_blocks(user)
     people = user.blocks.map{|b| b.person_id}
-    scope = all
+    scope = scoped
 
     if people.any?
       scope = scope.where("posts.author_id NOT IN (?)", people)
@@ -97,7 +87,7 @@ class Post < ActiveRecord::Base
   end
 
   def self.excluding_hidden_shareables(user)
-    scope = all
+    scope = scoped
     if user.has_hidden_shareables_of_type?
       scope = scope.where('posts.id NOT IN (?)', user.hidden_shareables["#{self.base_class}"])
     end

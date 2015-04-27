@@ -1,5 +1,3 @@
-// @license magnet:?xt=urn:btih:0b31508aeb0634b347b8270c7bee4d411b5d4109&dn=agpl-3.0.txt AGPL-v3-or-Later
-
 app.views.StreamPost = app.views.Post.extend({
   templateName: "stream-element",
   className : "stream_element loaded",
@@ -95,22 +93,15 @@ app.views.StreamPost = app.views.Post.extend({
     if(evt) { evt.preventDefault(); }
     if(!confirm(Diaspora.I18n.t('confirm_dialog'))) { return }
 
-    var self = this;
     $.ajax({
       url : "/share_visibilities/42",
       type : "PUT",
       data : {
         post_id : this.model.id
       }
-    }).done(function() {
-        self.remove();
-      })
-      .fail(function() {
-        Diaspora.page.flashMessages.render({
-          success: false,
-          notice: Diaspora.I18n.t('hide_post_failed')
-        });
-      });
+    })
+
+    this.remove();
   },
 
   focusCommentTextarea: function(evt){
@@ -122,5 +113,3 @@ app.views.StreamPost = app.views.Post.extend({
   }
 
 })
-// @license-end
-

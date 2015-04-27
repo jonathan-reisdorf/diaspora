@@ -21,18 +21,18 @@ shared_examples_for "it is taggable" do
     end
 
     it "supports non-ascii characters" do
-      expect(@object.tags(true).map(&:name)).to include('vöglein')
+      @object.tags(true).map(&:name).should include('vöglein')
     end
 
     it 'links each tag' do
       formatted_string = Diaspora::Taggable.format_tags(@str)
-      expect(formatted_string).to include(tag_link('what'))
-      expect(formatted_string).to include(tag_link('hey'))
-      expect(formatted_string).to include(tag_link('vöglein'))
+      formatted_string.should include(tag_link('what'))
+      formatted_string.should include(tag_link('hey'))
+      formatted_string.should include(tag_link('vöglein'))
     end
 
     it 'responds to plain_text' do
-      expect(Diaspora::Taggable.format_tags(@str, :plain_text => true)).to eq(@str)
+      Diaspora::Taggable.format_tags(@str, :plain_text => true).should == @str
     end
 
     it "doesn't mangle text when tags are involved" do
@@ -52,9 +52,9 @@ shared_examples_for "it is taggable" do
         '#12345 tag'             => "#{tag_link('12345')} tag",
         '#12cde tag'             => "#{tag_link('12cde')} tag",
         '#abc45 tag'             => "#{tag_link('abc45')} tag",
-        '#<3'                    => %{<a class="tag" href="/tags/<3">#&lt;3</a>},
-        'i #<3'                  => %{i <a class="tag" href="/tags/<3">#&lt;3</a>},
-        'i #<3 you'              => %{i <a class="tag" href="/tags/<3">#&lt;3</a> you},
+        '#<3'                    => %{<a href="/tags/<3" class="tag">#&lt;3</a>},
+        'i #<3'                  => %{i <a href="/tags/<3" class="tag">#&lt;3</a>},
+        'i #<3 you'              => %{i <a href="/tags/<3" class="tag">#&lt;3</a> you},
         '#<4'                    => '#&lt;4',
         'test#foo test'          => 'test#foo test',
         'test.#joo bar'          => 'test.#joo bar',
@@ -78,7 +78,7 @@ shared_examples_for "it is taggable" do
       }
 
       expected.each do |input,output|
-        expect(Diaspora::Taggable.format_tags(input)).to eq(output)
+        Diaspora::Taggable.format_tags(input).should == output
       end
     end
   end
@@ -87,10 +87,10 @@ shared_examples_for "it is taggable" do
     it 'builds the tags' do
       @object.send(@object.class.field_with_tags_setter, '#what')
       @object.build_tags
-      expect(@object.tag_list).to eq(['what'])
-      expect {
+      @object.tag_list.should == ['what']
+      lambda {
         @object.save
-      }.to change{@object.tags.count}.by(1)
+      }.should change{@object.tags.count}.by(1)
     end
   end
 
@@ -100,7 +100,7 @@ shared_examples_for "it is taggable" do
       arr = ['what', 'hey', 'that', 'THATWASMYBIKE', 'vöglein', '135440we', 'abc', 'h', 'ok', 'see', 're']
 
       @object.send(@object.class.field_with_tags_setter, str)
-      expect(@object.tag_strings).to match_array(arr)
+      @object.tag_strings.should =~ arr
     end
 
     it 'extracts tags despite surrounding text' do
@@ -143,7 +143,7 @@ shared_examples_for "it is taggable" do
 
       expected.each do |text,hashtag|
         @object.send  @object.class.field_with_tags_setter, text
-        expect(@object.tag_strings).to eq([hashtag].compact)
+        @object.tag_strings.should == [hashtag].compact
       end
     end
 
@@ -152,7 +152,7 @@ shared_examples_for "it is taggable" do
       arr = ['what','whaaaaaaaaaat']
 
       @object.send(@object.class.field_with_tags_setter, str)
-      expect(@object.tag_strings).to match_array(arr)
+      @object.tag_strings.should =~ arr
     end
 
     it 'is case insensitive' do
@@ -160,7 +160,7 @@ shared_examples_for "it is taggable" do
       arr = ['what']
 
       @object.send(@object.class.field_with_tags_setter, str)
-      expect(@object.tag_strings).to match_array(arr)
+      @object.tag_strings.should =~ arr
     end
   end
 end

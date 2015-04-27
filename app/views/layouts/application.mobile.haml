@@ -4,13 +4,14 @@
 
 !!!
 %html{:lang => I18n.locale.to_s, :dir => (rtl?) ? 'rtl' : 'ltr'}
-  %head{:prefix => og_prefix}
+  %head
     %title
       = pod_name
 
     %meta{:name => "description", :content => "diaspora* mobile"}/
     %meta{:name => "author", :content => "Diaspora, Inc."}/
     %meta{:charset => 'utf-8'}/
+    %meta{:property => "og:site_name", :content => "#{AppConfig.settings.pod_name}"}/
 
     / Viewport scale
     %meta{:name =>'viewport', :content => "width=device-width, minimum-scale=1 maximum-scale=1"}/
@@ -29,8 +30,6 @@
     /%meta{:name => "apple-mobile-web-app-capable", :content => "yes"}
     /%link{:rel => "apple-touch-startup-image", :href => "/images/apple-splash.png"}
 
-    = render 'layouts/open_graph'
-
     = chartbeat_head_block
 
     / Stylesheets
@@ -46,7 +45,6 @@
 
     = yield(:head)
 
-    = include_gon(:camel_case => true)
   %body
     #app
       %header#main_nav
@@ -69,7 +67,7 @@
             -# Menu
             = link_to(image_tag('icons/menu.png'), "#", id: "menu_badge", class: "badge")
         = link_to(image_tag('icons/asterisk_white_mobile.png'), stream_path, id: 'header_title')
-
+        
       - if user_signed_in?
         #drawer
           %header
@@ -91,13 +89,6 @@
                   - current_user.aspects.each do |aspect|
                     %li
                       = link_to aspect.name, aspects_stream_path(a_ids: [aspect.id])
-              %li#followed_tags
-                = link_to t('streams.followed_tag.title'), "#"
-              %li.no_border.hide
-                %ul
-                  - current_user.followed_tags.each do |tag|
-                    %li
-                      = tag_link(tag)
               %li
                 = link_to user_profile_path(current_user.username) do
                   = t('layouts.header.profile')
@@ -119,6 +110,5 @@
 
     / javascripts at the bottom
     = jquery_include_tag
-    = javascript_include_tag "mobile/mobile"
-    = load_javascript_locales
+    = javascript_include_tag :mobile
     = include_chartbeat

@@ -32,7 +32,7 @@ class Stream::Base
 
   # @return [ActiveRecord::Relation<Post>]
   def posts
-    Post.all
+    Post.scoped
   end
 
   # @return [Array<Post>]
@@ -115,7 +115,7 @@ class Stream::Base
   #
   # @return [Array<Contact>]
   def contacts_in_stream
-    @contacts_in_stream ||= Contact.where(:user_id => user.id, :person_id => people.map(&:id)).load
+    @contacts_in_stream ||= Contact.where(:user_id => user.id, :person_id => people.map{|x| x.id}).all
   end
 
   # @param post [Post]

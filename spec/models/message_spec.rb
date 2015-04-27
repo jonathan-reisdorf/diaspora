@@ -5,7 +5,7 @@
 require 'spec_helper'
 require Rails.root.join("spec", "shared_behaviors", "relayable")
 
-describe Message, :type => :model do
+describe Message do
   before do
     @create_hash = {
       :author => bob.person,
@@ -21,44 +21,44 @@ describe Message, :type => :model do
 
   it 'validates that the author is a participant in the conversation' do
     message = Message.new(:text => 'yo', :author => eve.person, :conversation_id => @conversation.id)
-    expect(message).not_to be_valid
+    message.should_not be_valid
   end
 
   describe '#notification_type' do
     it 'does not return anything for the author' do
-      expect(@message.notification_type(bob, bob.person)).to be_nil
+      @message.notification_type(bob, bob.person).should be_nil
     end
 
     it 'returns private mesage for an actual receiver' do
-      expect(@message.notification_type(alice, bob.person)).to eq(Notifications::PrivateMessage)
+      @message.notification_type(alice, bob.person).should == Notifications::PrivateMessage
     end
   end
 
   describe '#before_create' do
     it 'signs the message' do
-      expect(@message.author_signature).not_to be_blank
+      @message.author_signature.should_not be_blank
     end
 
     it 'signs the message author if author of conversation' do
-      expect(@message.parent_author_signature).not_to be_blank
+      @message.parent_author_signature.should_not be_blank
     end
   end
 
   describe 'serialization' do
     it 'serializes the text' do
-      expect(@xml).to include(@message.text)
+      @xml.should include(@message.text)
     end
 
     it 'serializes the author_handle' do
-      expect(@xml).to include(@message.author.diaspora_handle)
+      @xml.should include(@message.author.diaspora_handle)
     end
 
     it 'serializes the created_at time' do
-      expect(@xml).to include(@message.created_at.to_s)
+      @xml.should include(@message.created_at.to_s)
     end
 
     it 'serializes the conversation_guid time' do
-      expect(@xml).to include(@message.conversation.guid)
+      @xml.should include(@message.conversation.guid)
     end
   end
 
@@ -98,12 +98,12 @@ describe Message, :type => :model do
 
     describe '#increase_unread' do
       it 'increments the conversation visiblity for the conversation' do
-       expect(ConversationVisibility.where(:conversation_id => @object_by_recipient.reload.conversation.id,
-                                                     :person_id => @local_luke.person.id).first.unread).to eq(0)
+       ConversationVisibility.where(:conversation_id => @object_by_recipient.reload.conversation.id,
+                                                     :person_id => @local_luke.person.id).first.unread.should == 0
 
         @object_by_recipient.increase_unread(@local_luke)
-        expect(ConversationVisibility.where(:conversation_id => @object_by_recipient.reload.conversation.id,
-                                                     :person_id => @local_luke.person.id).first.unread).to eq(1)
+        ConversationVisibility.where(:conversation_id => @object_by_recipient.reload.conversation.id,
+                                                     :person_id => @local_luke.person.id).first.unread.should == 1
       end
     end
   end

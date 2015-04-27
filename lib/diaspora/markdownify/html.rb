@@ -4,7 +4,7 @@ module Diaspora
       include ActionView::Helpers::TextHelper
 
       def autolink link, type
-        Twitter::Autolink.auto_link_urls(link, url_target: "_blank")
+        auto_link(link, link: :urls, html: { target: "_blank" })
       end
     end
   end

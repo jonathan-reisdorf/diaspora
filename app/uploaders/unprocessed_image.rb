@@ -5,12 +5,6 @@
 class UnprocessedImage < CarrierWave::Uploader::Base
   include CarrierWave::MiniMagick
 
-  attr_accessor :strip_exif
-  
-  def strip_exif
-    @strip_exif || false
-  end
-
   def store_dir
     "uploads/images"
   end
@@ -23,13 +17,11 @@ class UnprocessedImage < CarrierWave::Uploader::Base
     model.random_string + File.extname(@filename) if @filename
   end
 
-  process :basic_process
+  process :orient_image
 
-  def basic_process
+  def orient_image
     manipulate! do |img|
       img.auto_orient
-      img.strip if strip_exif
-      img = yield(img) if block_given?
       img
     end
   end

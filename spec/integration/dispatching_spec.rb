@@ -1,6 +1,6 @@
 require 'spec_helper' 
 
-describe "Dispatching", :type => :request do
+describe "Dispatching" do
   context "a comment retraction on a public post" do
     it "should trigger a private dispatch" do
       luke, leia, raph = set_up_friends
@@ -11,8 +11,8 @@ describe "Dispatching", :type => :request do
       
       inlined_jobs do
         # Luke now retracts his comment
-        expect(Postzord::Dispatcher::Public).not_to receive(:new)
-        expect(Postzord::Dispatcher::Private).to receive(:new).and_return(double(:post => true))
+        Postzord::Dispatcher::Public.should_not_receive(:new)
+        Postzord::Dispatcher::Private.should_receive(:new).and_return(double(:post => true))
         luke.retract(comment)
       end
     end

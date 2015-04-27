@@ -18,6 +18,7 @@ class User
 
       p = build_post(class_name, opts)
       p.aspects = aspects
+
       if p.save!
         self.aspects.reload
 

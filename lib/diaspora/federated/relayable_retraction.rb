@@ -60,8 +60,4 @@ class RelayableRetraction < SignedRetraction
   def parent_author_signature_valid?
     verify_signature(self.parent_author_signature, self.parent.author)
   end
-
-  def parent_diaspora_handle
-    target.author.diaspora_handle
-  end
 end

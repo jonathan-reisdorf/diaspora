@@ -1,10 +1,8 @@
-<div class="pull-right">
+<div class="right">
   <form accept-charset="UTF-8" action="/tag_followings" method="post">
-      <input type="submit" class="btn 
-      {{#if tag_is_followed }}
-        green followed
-      {{else}}
-        btn-default
+      <input type="submit" class="button take_action 
+      {{#if tag_is_followed }} 
+        red_on_hover in_aspects
       {{/if}}
       " type="submit" value="{{followString}}"
         />

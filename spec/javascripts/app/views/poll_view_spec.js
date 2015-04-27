@@ -23,13 +23,13 @@ describe("app.views.Poll", function(){
 
   describe("vote", function(){
     it("checks the ajax call for voting", function(){
-      jasmine.Ajax.install();
+      spyOn($, "ajax");
       var answer = this.view.poll.poll_answers[0];
       var poll = this.view.poll;
 
       this.view.vote(answer.id);
 
-      var obj = JSON.parse(jasmine.Ajax.requests.mostRecent().params);
+      var obj = JSON.parse($.ajax.mostRecentCall.args[0].data);
       expect(obj.poll_id).toBe(poll.poll_id);
       expect(obj.poll_answer_id).toBe(answer.id);
     })

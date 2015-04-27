@@ -4,7 +4,7 @@
 
 require 'spec_helper'
 
-describe StreamsController, :type => :controller do
+describe StreamsController do
   describe '#aspects' do
     before do
       sign_in :user, alice
@@ -15,7 +15,7 @@ describe StreamsController, :type => :controller do
 
     context 'jasmine fixtures' do
       before do
-        allow_any_instance_of(Stream::Aspect).to receive(:ajax_stream?).and_return(false)
+        Stream::Aspect.any_instance.stub(:ajax_stream?).and_return(false)
       end
 
       it "generates a jasmine fixture", :fixture => true do

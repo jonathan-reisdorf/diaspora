@@ -8,30 +8,37 @@
   - else
     = t('.whatup', :pod => @pod_url)
 
-.container-fluid#tags_show
-  .row-fluid
-    .span3.offset1
-      %h4
-        = t('.tagged_people', :count => @stream.tagged_people_count, :tag => @stream.display_tag_name)
 
-      .side_stream.stream
-        = render :partial => 'people/index', :locals => {:people => @stream.tagged_people}
+- content_for :body_class do
+  = "tags_show"
 
-    .span7
-      .stream_container
-        #author_info
-          %h2
-            = @stream.display_tag_name
+#leftNavBar
+  %h3
+    = t('people', :count => @stream.tagged_people_count)
 
-        - if current_user
-          = render 'publisher/publisher', :selected_aspects => @stream.aspect_ids, :aspect_ids => @stream.aspect_ids, :aspect => @stream.aspect
+  .side_stream.stream
+    = render :partial => 'people/index', :locals => {:people => @stream.tagged_people}
 
-        %hr
+  %br
 
-        #main_stream.stream
+  - if user_signed_in?
+    = render "tags/followed_tags_listings"
 
-        #paginate
-          %span.loader.hidden
+.span-15.last
+  .stream_container
+    #author_info
+      %h2
+        = @stream.display_tag_name
 
-      %a{:id=>"back-to-top", :title=>"#{t('layouts.application.back_to_top')}", :href=>"#"}
-        &#8679;
+    - if current_user
+      = render 'publisher/publisher', :selected_aspects => @stream.aspect_ids, :aspect_ids => @stream.aspect_ids, :aspect => @stream.aspect
+
+    %hr
+
+    #main_stream.stream
+
+    #paginate
+      %span.loader.hidden
+
+  %a{:id=>"back-to-top", :title=>"#{t('layouts.application.back_to_top')}", :href=>"#"}
+    &#8679;

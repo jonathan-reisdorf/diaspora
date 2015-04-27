@@ -1,25 +1,25 @@
 require 'spec_helper'
 
-describe Reshare, :type => :model do
+describe Reshare do
   include Rails.application.routes.url_helpers
 
   it 'has a valid Factory' do
-    expect(FactoryGirl.build(:reshare)).to be_valid
+    FactoryGirl.build(:reshare).should be_valid
   end
 
   it 'requires root' do
     reshare = FactoryGirl.build(:reshare, :root => nil)
-    expect(reshare).not_to be_valid
+    reshare.should_not be_valid
   end
 
   it 'require public root' do
     reshare = FactoryGirl.build(:reshare, :root => FactoryGirl.create(:status_message, :public => false))
-    expect(reshare).not_to be_valid
-    expect(reshare.errors[:base]).to include('Only posts which are public may be reshared.')
+    reshare.should_not be_valid
+    reshare.errors[:base].should include('Only posts which are public may be reshared.')
   end
 
   it 'forces public' do
-    expect(FactoryGirl.create(:reshare, :public => false).public).to be true
+    FactoryGirl.create(:reshare, :public => false).public.should be_true
   end
 
   describe "#receive" do
@@ -32,20 +32,20 @@ describe Reshare, :type => :model do
 
     it 'increments the reshare count' do
       receive_reshare
-      expect(@root.resharers.count).to eq(1)
+      @root.resharers.count.should == 1
     end
 
     it 'adds the resharer to the re-sharers of the post' do
       receive_reshare
-      expect(@root.resharers).to include(@reshare.author)
+      @root.resharers.should include(@reshare.author)
     end
     it 'does not error if the root author has a contact for the resharer' do
       bob.share_with @reshare.author, bob.aspects.first
-      expect {
+      proc {
         Timeout.timeout(5) do
           receive_reshare #This doesn't ever terminate on my machine before it was fixed.
         end
-      }.not_to raise_error
+      }.should_not raise_error
     end
   end
 
@@ -58,8 +58,8 @@ describe Reshare, :type => :model do
     end
 
     it 'deletates #nsfw to the root post' do
-      expect(@sfw_reshare.nsfw).not_to be true
-      expect(@nsfw_reshare.nsfw).to be_truthy
+      @sfw_reshare.nsfw.should_not be_true
+      @nsfw_reshare.nsfw.should be_true
     end
   end
 
@@ -69,18 +69,11 @@ describe Reshare, :type => :model do
       @reshare = FactoryGirl.build(:reshare, :root => sm)
     end
     it 'does not return anything for non-author of the original post' do
-      expect(@reshare.notification_type(bob, @reshare.author)).to be_nil
+      @reshare.notification_type(bob, @reshare.author).should be_nil
     end
 
     it 'returns "Reshared" for the original post author' do
-      expect(@reshare.notification_type(alice, @reshare.author)).to eq(Notifications::Reshared)
-    end
-
-    it 'does not error out if the root was deleted' do
-      @reshare.root = nil
-      expect {
-        @reshare.notification_type(alice, @reshare.author)
-      }.to_not raise_error
+      @reshare.notification_type(alice, @reshare.author).should == Notifications::Reshared
     end
   end
 
@@ -90,7 +83,7 @@ describe Reshare, :type => :model do
       rs1 = FactoryGirl.build(:reshare, :root=>@sm)
       rs2 = FactoryGirl.build(:reshare, :root=>rs1)
       @rs3 = FactoryGirl.build(:reshare, :root=>rs2)
-
+      
      sm = FactoryGirl.create(:status_message, :author => alice.person, :public => true)
      rs1 = FactoryGirl.create(:reshare, :root => sm)
      @of_deleted = FactoryGirl.build(:reshare, :root => rs1)
@@ -99,7 +92,7 @@ describe Reshare, :type => :model do
     end
 
     it 'resolves root posts to the top level' do
-      expect(@rs3.absolute_root).to eq(@sm)
+      @rs3.absolute_root.should == @sm
     end
 
     it 'can handle deleted reshares' do
@@ -132,13 +125,13 @@ describe Reshare, :type => :model do
 
     context 'serialization' do
       it 'serializes root_diaspora_id' do
-        expect(@xml).to include("root_diaspora_id")
-        expect(@xml).to include(@reshare.author.diaspora_handle)
+        @xml.should include("root_diaspora_id")
+        @xml.should include(@reshare.author.diaspora_handle)
       end
 
       it 'serializes root_guid' do
-        expect(@xml).to include("root_guid")
-        expect(@xml).to include(@reshare.root.guid)
+        @xml.should include("root_guid")
+        @xml.should include(@reshare.root.guid)
       end
     end
 
@@ -150,15 +143,15 @@ describe Reshare, :type => :model do
         end
 
         it 'marshals the guid' do
-          expect(Reshare.from_xml(@xml).root_guid).to eq(@root_object.guid)
+          Reshare.from_xml(@xml).root_guid.should == @root_object.guid
         end
 
         it 'fetches the root post from root_guid' do
-          expect(Reshare.from_xml(@xml).root).to eq(@root_object)
+          Reshare.from_xml(@xml).root.should == @root_object
         end
 
         it 'fetches the root author from root_diaspora_id' do
-          expect(Reshare.from_xml(@xml).root.author).to eq(@original_author)
+          Reshare.from_xml(@xml).root.author.should == @original_author
         end
       end
 
@@ -178,8 +171,8 @@ describe Reshare, :type => :model do
           @root_object = @reshare.root
           @root_object.delete
           @response = double
-          allow(@response).to receive(:status).and_return(200)
-          allow(@response).to receive(:success?).and_return(true)
+          @response.stub(:status).and_return(200)
+          @response.stub(:success?).and_return(true)
         end
 
         it 'fetches the root author from root_diaspora_id' do
@@ -191,29 +184,29 @@ describe Reshare, :type => :model do
           @original_author.profile = @original_profile
 
           wf_prof_double = double
-          expect(wf_prof_double).to receive(:fetch).and_return(@original_author)
-          expect(Webfinger).to receive(:new).and_return(wf_prof_double)
+          wf_prof_double.should_receive(:fetch).and_return(@original_author)
+          Webfinger.should_receive(:new).and_return(wf_prof_double)
 
-          allow(@response).to receive(:body).and_return(@root_object.to_diaspora_xml)
+          @response.stub(:body).and_return(@root_object.to_diaspora_xml)
 
-          expect(Faraday.default_connection).to receive(:get).with(URI.join(@original_author.url, short_post_path(@root_object.guid, :format => "xml"))).and_return(@response)
+          Faraday.default_connection.should_receive(:get).with(@original_author.url + short_post_path(@root_object.guid, :format => "xml")).and_return(@response)
           Reshare.from_xml(@xml)
         end
 
         context "fetching post" do
-          it "raises if the post is not found" do
-            allow(@response).to receive(:status).and_return(404)
-            expect(Faraday.default_connection).to receive(:get).and_return(@response)
+          it "doesn't error out if the post is not found" do
+            @response.stub(:status).and_return(404)
+            Faraday.default_connection.should_receive(:get).and_return(@response)
 
             expect {
               Reshare.from_xml(@xml)
-            }.to raise_error(Diaspora::PostNotFetchable)
+            }.to_not raise_error
           end
 
           it "raises if there's another error receiving the post" do
-            allow(@response).to receive(:status).and_return(500)
-            allow(@response).to receive(:success?).and_return(false)
-            expect(Faraday.default_connection).to receive(:get).and_return(@response)
+            @response.stub(:status).and_return(500)
+            @response.stub(:success?).and_return(false)
+            Faraday.default_connection.should_receive(:get).and_return(@response)
 
             expect {
               Reshare.from_xml(@xml)
@@ -223,25 +216,25 @@ describe Reshare, :type => :model do
 
         context 'saving the post' do
           before do
-            allow(@response).to receive(:body).and_return(@root_object.to_diaspora_xml)
-            allow(Faraday.default_connection).to receive(:get).with(URI.join(@reshare.root.author.url, short_post_path(@root_object.guid, :format => "xml"))).and_return(@response)
+            @response.stub(:body).and_return(@root_object.to_diaspora_xml)
+            Faraday.default_connection.stub(:get).with(@reshare.root.author.url + short_post_path(@root_object.guid, :format => "xml")).and_return(@response)
           end
 
           it 'fetches the root post from root_guid' do
             root = Reshare.from_xml(@xml).root
 
             [:text, :guid, :diaspora_handle, :type, :public].each do |attr|
-              expect(root.send(attr)).to eq(@reshare.root.send(attr))
+              root.send(attr).should == @reshare.root.send(attr)
             end
           end
 
           it 'correctly saves the type' do
-            expect(Reshare.from_xml(@xml).root.reload.type).to eq("StatusMessage")
+            Reshare.from_xml(@xml).root.reload.type.should == "StatusMessage"
           end
 
           it 'correctly sets the author' do
             @original_author = @reshare.root.author
-            expect(Reshare.from_xml(@xml).root.reload.author.reload).to eq(@original_author)
+            Reshare.from_xml(@xml).root.reload.author.reload.should == @original_author
           end
 
           it 'verifies that the author of the post received is the same as the author in the reshare xml' do
@@ -251,14 +244,14 @@ describe Reshare, :type => :model do
             different_person = FactoryGirl.build(:person)
 
             wf_prof_double = double
-            expect(wf_prof_double).to receive(:fetch).and_return(different_person)
-            expect(Webfinger).to receive(:new).and_return(wf_prof_double)
+            wf_prof_double.should_receive(:fetch).and_return(different_person)
+            Webfinger.should_receive(:new).and_return(wf_prof_double)
 
-            allow(different_person).to receive(:url).and_return(@original_author.url)
+            different_person.stub(:url).and_return(@original_author.url)
 
-            expect{
+            lambda{
               Reshare.from_xml(@xml)
-            }.to raise_error /^Diaspora ID \(.+\) in the root does not match the Diaspora ID \(.+\) specified in the reshare!$/
+            }.should raise_error /^Diaspora ID \(.+\) in the root does not match the Diaspora ID \(.+\) specified in the reshare!$/
           end
         end
       end

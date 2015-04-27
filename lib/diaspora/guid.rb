@@ -4,7 +4,7 @@ module Diaspora::Guid
   # Creates a before_create callback which calls #set_guid and makes the guid serialize in to_xml
   def self.included(model)
     model.class_eval do
-      after_initialize :set_guid
+      before_create :set_guid
       xml_attr :guid
       validates :guid, :uniqueness => true
 

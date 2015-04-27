@@ -36,14 +36,8 @@
     textarea {
       margin-bottom: 30px;
     }
-
-    #publisher_textarea_wrapper.with_attachments {
-      textarea {
-        margin-bottom: 20px;
-      }
-    }
   }
-
+  
   .mentions-autocomplete-list ul {
     width: 483px;
   }
@@ -70,7 +64,6 @@
 
     .public_toggle {
       text-align: right;
-
       .dropdown {
         text-align: left;
       }
@@ -113,7 +106,6 @@
 
   #status_message_fake_text {
     min-height: 20px;
-    padding: 4px 6px;
   }
 
   .content_creation {
@@ -140,7 +132,7 @@
     }
 
     img {
-      opacity: 0.4;
+      @include opacity(0.4);
       vertical-align: bottom;
     }
 
@@ -149,7 +141,7 @@
       cursor: pointer;
 
       img {
-        opacity: 0.8;
+        @include opacity(0.8);
       }
     }
 
@@ -158,19 +150,19 @@
       text-shadow: 0 1px 0 #fafafa;
 
       img {
-        opacity: 1;
+        @include opacity(1);
       }
     }
 
     &.loading {
-      opacity: 0.5;
+      @include opacity(0.5);
     }
   }
 }
 
 #publisher_textarea_wrapper {
   #hide_publisher {
-    opacity: 0.3;
+    @include opacity(0.3);
     z-index: 5;
     padding: 3px;
     position: absolute;
@@ -183,17 +175,16 @@
     }
 
     &:hover {
-      opacity: 1;
+      @include opacity(1);
     }
   }
-
+  
   .markdownIndications {
     position: absolute;
     bottom: 0px;
-    left: 5px;
   }
 
-  border-radius: 2px;
+  @include border-radius(2px);
 
   border: 1px solid #ccc;
   background: #fff;
@@ -216,11 +207,16 @@
   }
 
   &.with_attachments {
-    padding-bottom: 25px;
+    padding-bottom: 38px;
   }
 
   #photodropzone {
-    margin: 0 5px;
+    z-index: 3;
+    position: absolute;
+    bottom: 15px;
+    right: 35px;
+    width: 430px;
+    left: 5px;
     padding: 0;
 
     li {
@@ -231,7 +227,7 @@
         max-height: 55px;
       }
       .circle {
-        border-radius: 20px;
+        @include border-radius(20px);
 
         display: none;
         z-index: 1;
@@ -301,6 +297,8 @@
 }
 
 #publisher-images {
+  padding-left: 5px;
+
   #locator {
     bottom: 1px !important;
     display: inline-block;
@@ -310,13 +308,13 @@
     cursor: pointer;
     img {
       padding-top: 2px;
-      opacity: 0.4;
+      @include opacity(0.4);
     }
     &:hover {
       color: $text-dark-grey;
       cursor: pointer;
       img {
-        opacity: 0.8;
+        @include opacity(0.8);
       }
     }
   }
@@ -328,13 +326,13 @@
     position: absolute !important;
     right: 55px;
     i {
-      opacity: 0.4;
+      @include opacity(0.4);
     }
     &:hover {
       color: $text-dark-grey;
       cursor: pointer;
       i {
-        opacity: 1;
+        @include opacity(1);
       }
     }
   }
@@ -345,11 +343,11 @@
   }
 }
 
-#poll_creator_container {
+#publisher-poll-creator {
   border: 1px solid $border-dark-grey;
   padding: 5px;
   margin-top: 5px;
-  border-radius: 2px;
+  @include border-radius(2px);
   display: none;
 
   &.active {
@@ -380,21 +378,22 @@
       }
   }
   .poll-answer {
-    .span1, .span11 { display: inline-block; }
-    .span11 { width: 96%; }
     input {
-      width: 100%;
+      width: 96%;
       display: inline-block;
       vertical-align: bottom;
     }
     .remove-answer {
-      opacity: 0.4;
+      width: 14px;
+      height: 14px;
+      @include opacity(0.4);
       cursor: pointer;
+      vertical-align: top;
+      margin-top: 7px;
       display: none;
-      line-height: 27px;
 
       &:hover {
-        opacity: 1;
+        @include opacity(1);
       }
       &.active {
         display: inline-block;

@@ -42,7 +42,7 @@ module MobileHelper
 
   def additional_photos
     if photo.status_message_guid?
-      @additional_photos ||= photo.status_message.photos.order(:created_at)
+      @additional_photos ||= photo.status_message.photos
     end
   end
 

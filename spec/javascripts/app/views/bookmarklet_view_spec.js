@@ -49,12 +49,12 @@ describe('app.views.Bookmarklet', function() {
   });
 
   it('keeps the publisher disabled after successful post creation', function() {
-    jasmine.Ajax.install();
+    jasmine.Ajax.useMock();
 
     init_bookmarklet(test_data);
     spec.content().find('form').submit();
 
-    jasmine.Ajax.requests.mostRecent().response({
+    mostRecentAjaxRequest().response({
       status: 200,  // success!
       responseText: "{}"
     });

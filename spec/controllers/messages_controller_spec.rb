@@ -4,7 +4,7 @@
 
 require 'spec_helper'
 
-describe MessagesController, :type => :controller do
+describe MessagesController do
   before do
     sign_in :user, alice
   end
@@ -33,11 +33,11 @@ describe MessagesController, :type => :controller do
         end
 
         it 'redirects to conversation' do
-          expect {
+          lambda {
             post :create, @message_params
-          }.to change(Message, :count).by(1)
-          expect(response.status).to eq(302)
-          expect(response).to redirect_to(conversations_path(:conversation_id => @conversation))
+          }.should change(Message, :count).by(1)
+          response.status.should == 302
+          response.should redirect_to(conversations_path(:conversation_id => @conversation))
         end
       end
 
@@ -50,10 +50,10 @@ describe MessagesController, :type => :controller do
         end
 
         it 'does not create the message' do
-          expect {
+          lambda {
             post :create, @message_params
-          }.not_to change(Message, :count)
-          expect(flash[:error]).to be_present
+          }.should_not change(Message, :count)
+          flash[:error].should be_present
         end
       end
     end
@@ -70,8 +70,8 @@ describe MessagesController, :type => :controller do
 
       it 'comments' do
         post :create, @message_params
-        expect(response.status).to eq(302)
-        expect(response).to redirect_to(conversations_path(:conversation_id => @conversation))
+        response.status.should == 302
+        response.should redirect_to(conversations_path(:conversation_id => @conversation))
       end
 
       it "doesn't overwrite author_id" do
@@ -80,7 +80,7 @@ describe MessagesController, :type => :controller do
 
         post :create, @message_params
         created_message = Message.find_by_text(@message_params[:message][:text])
-        expect(created_message.author).to eq(alice.person)
+        created_message.author.should == alice.person
       end
 
       it "doesn't overwrite id" do
@@ -92,7 +92,7 @@ describe MessagesController, :type => :controller do
         @message_params[:id] = old_message.id
 
         post :create, @message_params
-        expect(old_message.reload.text).to eq('hello')
+        old_message.reload.text.should == 'hello'
       end
     end
 
@@ -109,10 +109,10 @@ describe MessagesController, :type => :controller do
       end
 
       it 'does not create the message' do
-        expect {
+        lambda {
           post :create, @message_params
-        }.not_to change(Message, :count)
-        expect(flash[:error]).to be_present
+        }.should_not change(Message, :count)
+        flash[:error].should be_present
       end
     end
   end

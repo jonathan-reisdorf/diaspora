@@ -31,9 +31,7 @@ class Webfinger
     Rails.logger.info("Getting: #{url} for #{account}")
     begin
       res = Faraday.get(url)
-      unless res.success?
-        raise "Failed to fetch #{url}: #{res.status}"
-      end
+      return false if res.status == 404
       res.body
     rescue OpenSSL::SSL::SSLError => e
       Rails.logger.info "Failed to fetch #{url}: SSL setup invalid"

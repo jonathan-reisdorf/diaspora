@@ -4,7 +4,7 @@
 
 require 'spec_helper'
 
-describe StreamsController, :type => :controller do
+describe StreamsController do
   describe '#multi' do
     before do
       sign_in :user, alice
@@ -53,7 +53,7 @@ TXT
 
       Timecop.travel(time) do
         get :multi, :format => :json
-        expect(response).to be_success
+        response.should be_success
         save_fixture(response.body, "stream_json")
       end
     end

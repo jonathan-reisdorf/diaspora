@@ -4,7 +4,7 @@
 
 require 'spec_helper'
 
-describe ConversationVisibilitiesController, :type => :controller do
+describe ConversationVisibilitiesController do
   before do
     @user1 = alice
     sign_in :user, @user1
@@ -20,31 +20,18 @@ describe ConversationVisibilitiesController, :type => :controller do
 
   describe '#destroy' do
     it 'deletes the visibility' do
-      expect {
+      lambda {
         delete :destroy, :conversation_id => @conversation.id
-      }.to change(ConversationVisibility, :count).by(-1)
+      }.should change(ConversationVisibility, :count).by(-1)
     end
 
     it 'does not let a user destroy a visibility that is not theirs' do
       user2 = eve
       sign_in :user, user2
 
-      expect {
+      lambda {
         delete :destroy, :conversation_id => @conversation.id
-      }.not_to change(ConversationVisibility, :count)
-    end
-    
-    it 'returns "hidden"' do
-      get :destroy, :conversation_id => @conversation.id
-      expect(flash.notice).to include("hidden")
-    end
-    
-    it 'returns "deleted" when last participant' do
-      get :destroy, :conversation_id => @conversation.id
-      sign_out :user
-      sign_in :user, bob
-      get :destroy, :conversation_id => @conversation.id
-      expect(flash.notice).to include("deleted")
+      }.should_not change(ConversationVisibility, :count)
     end
   end
 end

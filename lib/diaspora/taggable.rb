@@ -25,10 +25,16 @@ module Diaspora
     end
 
     def tag_strings
-      (send(self.class.field_with_tags) || "")
-        .scan(/(?:^|\s)#([#{ActsAsTaggableOn::Tag.tag_text_regexp}]+|<3)/u)
-        .map(&:first)
-        .uniq(&:downcase)
+      regex = /(?:^|\s)#([#{ActsAsTaggableOn::Tag.tag_text_regexp}]+|<3)/u
+      matches = self.
+        send( self.class.field_with_tags ).
+        scan(regex).
+        map { |match| match[0] }
+      unique_matches = matches.inject(Hash.new) do |h,element|
+        h[element.downcase] = element unless h[element.downcase]
+        h
+      end
+      unique_matches.values
     end
 
     def self.format_tags(text, opts={})
@@ -44,7 +50,7 @@ module Diaspora
           url_bit = '<3'
         end
 
-        %{#{pre}<a class="tag" href="/tags/#{url_bit}">#{clickable}</a>}
+        %{#{pre}<a href="/tags/#{url_bit}" class="tag">#{clickable}</a>}
       }.html_safe
     end
   end

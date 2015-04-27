@@ -47,11 +47,6 @@ module UserCukeHelpers
     page.has_content?("#{@me.first_name} #{@me.last_name}")
   end
 
-  # checks the mobile page content to see, if the login was successful
-  def confirm_login_mobile
-    page.has_css?("#notification_badge")
-  end
-
   # delete all cookies, destroying the current session
   def logout
     $browser.delete_cookie('_session', 'path=/') if $browser
@@ -110,12 +105,12 @@ module UserCukeHelpers
   end
 
   def confirm_getting_started_contents
-    expect(page).to have_content("Well, hello there!")
-    expect(page).to have_content("Who are you?")
-    expect(page).to have_content("What are you into?")
+    page.should have_content("Well, hello there!")
+    page.should have_content("Who are you?")
+    page.should have_content("What are you into?")
 
     # the username that was just entered for registration
-    expect(page).to have_field("profile_first_name", with: @username)
+    page.should have_field("profile_first_name", with: @username)
   end
 end
 

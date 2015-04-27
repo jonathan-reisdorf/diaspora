@@ -1,5 +1,3 @@
-// @license magnet:?xt=urn:btih:0b31508aeb0634b347b8270c7bee4d411b5d4109&dn=agpl-3.0.txt AGPL-v3-or-Later
-
 //= require ../aspects_dropdown_view
 
 /*
@@ -22,9 +20,10 @@ app.views.PublisherAspectSelector  = app.views.AspectsDropdown.extend({
     var target = $(evt.target).closest('li');
 
     // visually toggle the aspect selection
-    if (target.is('.radio')) {
+    if( target.is('.radio') ) {
       this._toggleRadio(target);
-    } else if (target.is('.aspect_selector')) {
+    } 
+    else if( target.is('.aspect_selector') ) {
       // don't close the dropdown
       evt.stopPropagation();
       this._toggleCheckbox(target);
@@ -32,16 +31,6 @@ app.views.PublisherAspectSelector  = app.views.AspectsDropdown.extend({
 
     this._updateSelectedAspectIds();
     this._updateButton('btn-default');
-    
-    // update the globe or lock icon
-    var icon = this.$('#visibility-icon');
-    if (target.find('.text').text().trim() == Diaspora.I18n.t('stream.public')) {
-      icon.removeClass('lock');
-      icon.addClass('globe');
-    } else {
-      icon.removeClass('globe');
-      icon.addClass('lock');
-    }
   },
 
   // select a (list of) aspects in the dropdown selector by the given list of ids
@@ -68,5 +57,3 @@ app.views.PublisherAspectSelector  = app.views.AspectsDropdown.extend({
     });
   }
 });
-// @license-end
-

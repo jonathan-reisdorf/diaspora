@@ -1,5 +1,3 @@
-// @license magnet:?xt=urn:btih:0b31508aeb0634b347b8270c7bee4d411b5d4109&dn=agpl-3.0.txt AGPL-v3-or-Later
-
 app.pages.SinglePostViewer = app.views.Base.extend({
   templateName: "single-post-viewer",
 
@@ -33,12 +31,10 @@ app.pages.SinglePostViewer = app.views.Base.extend({
   postRenderTemplate : function() {
     if(this.model.get("title")){
       // formats title to html...
-      var html_title = app.helpers.textFormatter(this.model.get("title"), this.model.get("mentioned_people"));
+      var html_title = app.helpers.textFormatter(this.model.get("title"), this.model);
       //... and converts html to plain text
       document.title = $('<div>').html(html_title).text();
     }
   },
 
 });
-// @license-end
-

@@ -4,7 +4,7 @@
 
 require 'spec_helper'
 
-describe StatusMessagesController, :type => :controller do
+describe StatusMessagesController do
   describe '#bookmarklet' do
     before do
       sign_in :user, bob

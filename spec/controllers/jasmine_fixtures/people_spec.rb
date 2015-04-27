@@ -4,7 +4,7 @@
 
 require 'spec_helper'
 
-describe PeopleController, :type => :controller do
+describe PeopleController do
   describe '#index' do
     before do
       sign_in :user, bob
@@ -23,8 +23,6 @@ describe PeopleController, :type => :controller do
 
   describe '#aspect_membership_dropdown' do
     before do
-      aspect = bob.aspects.create name: 'Testing'
-      bob.share_with alice.person, aspect
       sign_in :user, bob
     end
 

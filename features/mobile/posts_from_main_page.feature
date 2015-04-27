@@ -9,9 +9,8 @@ Feature: posting from the mobile main page
         | username   |
         | bob        |
         | alice      |
-      And I toggle the mobile view
-      And I am on the home page
-      And I sign in as "bob@bob.bob" on the mobile website
+      And I visit the mobile home page
+      And I sign in as "bob@bob.bob"
       And a user with username "bob" is connected with "alice"
       Given I have following aspects:
         | PostingTo            |
@@ -20,8 +19,8 @@ Feature: posting from the mobile main page
       And I have user with username "alice" in an aspect called "NotPostingThingsHere"
 
     Scenario: post and delete some text
-      Given I visit the mobile publisher page
-      And I append "I am eating yogurt" to the mobile publisher
+      Given I publisher mobile page
+      And I append "I am eating yogurt" to the publisher mobile
       And I select "Unicorns" from "aspect_ids_"
       And I press "Share"
       When I visit the mobile stream page
@@ -31,7 +30,7 @@ Feature: posting from the mobile main page
       Then I should not see "I am eating yogurt"
 
     Scenario: post a photo without text
-      Given I visit the mobile publisher page
+      Given I publisher mobile page
       When I attach the file "spec/fixtures/button.png" to hidden "file" within "#file-upload-publisher"
       Then I should see an uploaded image within the photo drop zone
       And I should see "button.png completed"
@@ -39,12 +38,12 @@ Feature: posting from the mobile main page
       When I visit the mobile stream page
       Then I should see a "img" within ".stream_element div.photo_attachments"
       When I log out
-      And I sign in as "alice@alice.alice" on the mobile website
+      And I sign in as "alice@alice.alice"
       When I visit the mobile stream page
       Then I should see a "img" within ".stream_element div.photo_attachments"
 
     Scenario: back out of posting a photo-only post
-      Given I visit the mobile publisher page
+      Given I publisher mobile page
       When I attach the file "spec/fixtures/bad_urls.txt" to "file" within "#file-upload-publisher"
       And I confirm the alert
       Then I should not see an uploaded image within the photo drop zone
@@ -54,8 +53,8 @@ Feature: posting from the mobile main page
       Then I should not see an uploaded image within the photo drop zone
 
     Scenario: back out of uploading a picture when another has been attached
-      Given I visit the mobile publisher page
-      And I append "I am eating yogurt" to the mobile publisher
+      Given I publisher mobile page
+      And I append "I am eating yogurt" to the publisher mobile
       And I attach the file "spec/fixtures/button.gif" to hidden "file" within "#file-upload-publisher"
       And I attach the file "spec/fixtures/button.png" to hidden "file" within "#file-upload-publisher"
       And I click to delete the first uploaded photo

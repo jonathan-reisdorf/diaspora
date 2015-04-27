@@ -1,13 +1,11 @@
-#people_stream
+.people_stream
   - people.each do |person|
-    .media.stream_element{:id => person.id}
-      .media-object.pull-left
-        = person_image_link(person, :size => :thumb_small)
-      .media-body
-        = person_link(person, :class => 'name')
-        .info.diaspora_handle
-          = person.diaspora_handle
-        .info.tags
-          = Diaspora::Taggable.format_tags(person.profile.tag_string)
+    .stream_element{:id => person.id}
+      .media
+        .img
+          = person_image_tag(person)
+        .bg
+          %span.from
+            = person_link(person, :class => "hovercardable")
 
-  = will_paginate people, :renderer => WillPaginate::ActionView::BootstrapLinkRenderer
+  = will_paginate people, :inner_window => 3

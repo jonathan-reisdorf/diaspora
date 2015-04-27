@@ -1,8 +1,7 @@
-module Admin
-  class AdminController < ApplicationController
 
-    before_filter :authenticate_user!
-    before_filter :redirect_unless_admin
+class Admin::AdminController < ApplicationController
 
-  end
+  before_filter :authenticate_user!
+  before_filter :redirect_unless_admin
+
 end

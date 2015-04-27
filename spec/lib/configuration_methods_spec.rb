@@ -17,37 +17,37 @@ describe Configuration::Methods do
     
     it "properly parses the pod url" do
       @settings.environment.url = "http://example.org/"
-      expect(@settings.pod_uri.scheme).to eq("http")
-      expect(@settings.pod_uri.host).to eq("example.org")
+      @settings.pod_uri.scheme.should == "http"
+      @settings.pod_uri.host.should == "example.org"
     end
     
      it "adds a trailing slash if there isn't one" do
       @settings.environment.url = "http://example.org"
-      expect(@settings.pod_uri.to_s).to eq("http://example.org/")
+      @settings.pod_uri.to_s.should == "http://example.org/"
     end
     
     it "does not add an extra trailing slash" do
       @settings.environment.url = "http://example.org/"
-      expect(@settings.pod_uri.to_s).to eq("http://example.org/")
+      @settings.pod_uri.to_s.should == "http://example.org/"
     end
     
     it "adds http:// on the front if it's missing" do
       @settings.environment.url = "example.org/"
-      expect(@settings.pod_uri.to_s).to eq("http://example.org/")
+      @settings.pod_uri.to_s.should == "http://example.org/"
     end
     
     it "does not add a prefix if there already is https:// on the front" do
       @settings.environment.url = "https://example.org/"
-      expect(@settings.pod_uri.to_s).to eq("https://example.org/")
+      @settings.pod_uri.to_s.should == "https://example.org/"
     end
   end
   
   describe "#bare_pod_uri" do
     it 'is #pod_uri.authority stripping www.' do
       pod_uri = double
-      allow(@settings).to receive(:pod_uri).and_return(pod_uri)
-      expect(pod_uri).to receive(:authority).and_return("www.example.org")
-      expect(@settings.bare_pod_uri).to eq('example.org')
+      @settings.stub(:pod_uri).and_return(pod_uri)
+      pod_uri.should_receive(:authority).and_return("www.example.org")
+      @settings.bare_pod_uri.should == 'example.org'
     end
   end
   
@@ -55,44 +55,44 @@ describe Configuration::Methods do
     it "includes the enabled services only" do
       services = double
       enabled = double
-      allow(enabled).to receive(:enable?).and_return(true)
+      enabled.stub(:enable?).and_return(true)
       disabled = double
-      allow(disabled).to receive(:enable?).and_return(false)
-      allow(services).to receive(:twitter).and_return(enabled)
-      allow(services).to receive(:tumblr).and_return(enabled)
-      allow(services).to receive(:facebook).and_return(disabled)
-      allow(services).to receive(:wordpress).and_return(disabled)
-      allow(@settings).to receive(:services).and_return(services)
-      expect(@settings.configured_services).to include :twitter
-      expect(@settings.configured_services).to include :tumblr
-      expect(@settings.configured_services).not_to include :facebook
-      expect(@settings.configured_services).not_to include :wordpress
+      disabled.stub(:enable?).and_return(false)
+      services.stub(:twitter).and_return(enabled)
+      services.stub(:tumblr).and_return(enabled)
+      services.stub(:facebook).and_return(disabled)
+      services.stub(:wordpress).and_return(disabled)
+      @settings.stub(:services).and_return(services)
+      @settings.configured_services.should include :twitter
+      @settings.configured_services.should include :tumblr
+      @settings.configured_services.should_not include :facebook
+      @settings.configured_services.should_not include :wordpress
     end
   end
   
   describe "#version_string" do
     before do
       @version = double
-      allow(@version).to receive(:number).and_return("0.0.0.0")
-      allow(@version).to receive(:release?).and_return(true)
-      allow(@settings).to receive(:version).and_return(@version)
-      allow(@settings).to receive(:git_available?).and_return(false)
+      @version.stub(:number).and_return("0.0.0.0")
+      @version.stub(:release?).and_return(true)
+      @settings.stub(:version).and_return(@version)
+      @settings.stub(:git_available?).and_return(false)
       @settings.instance_variable_set(:@version_string, nil)
     end
 
     it "includes the version" do
-      expect(@settings.version_string).to include @version.number
+      @settings.version_string.should include @version.number
     end
     
     context "with git available" do
       before do
-        allow(@settings).to receive(:git_available?).and_return(true)
-        allow(@settings).to receive(:git_revision).and_return("1234567890")
+        @settings.stub(:git_available?).and_return(true)
+        @settings.stub(:git_revision).and_return("1234567890")
       end
       
       it "includes the 'patchlevel'" do
-        expect(@settings.version_string).to include "-p#{@settings.git_revision[0..7]}"
-        expect(@settings.version_string).not_to include @settings.git_revision[0..8]
+        @settings.version_string.should include "-p#{@settings.git_revision[0..7]}"
+        @settings.version_string.should_not include @settings.git_revision[0..8]
       end
     end
   end
@@ -104,7 +104,7 @@ describe Configuration::Methods do
       end
       
       it "uses that" do
-        expect(@settings.get_redis_options[:url]).to match "myserver"
+        @settings.get_redis_options[:url].should match "myserver"
       end
     end
     
@@ -115,7 +115,7 @@ describe Configuration::Methods do
       end
       
       it "uses that" do
-        expect(@settings.get_redis_options[:url]).to match "yourserver"
+        @settings.get_redis_options[:url].should match "yourserver"
       end
     end
     
@@ -127,7 +127,7 @@ describe Configuration::Methods do
       end
       
       it "uses that" do
-        expect(@settings.get_redis_options[:url]).to match "ourserver"
+        @settings.get_redis_options[:url].should match "ourserver"
       end
     end
     
@@ -139,7 +139,7 @@ describe Configuration::Methods do
       end
       
       it "uses that" do
-        expect(@settings.get_redis_options[:url]).to match "/tmp/redis.sock"
+        @settings.get_redis_options[:url].should match "/tmp/redis.sock"
       end
     end
   end
@@ -148,9 +148,9 @@ describe Configuration::Methods do
     context "with a relative log set" do
       it "joins that with Rails.root" do
         path = "/some/path/"
-        allow(Rails).to receive(:root).and_return(double(join: path))
+        Rails.stub(:root).and_return(double(join: path))
         @settings.environment.sidekiq.log = "relative_path"
-        expect(@settings.sidekiq_log).to match path
+        @settings.sidekiq_log.should match path
       end
     end
 
@@ -158,7 +158,7 @@ describe Configuration::Methods do
       it "just returns that" do
         path = "/foobar.log"
         @settings.environment.sidekiq.log = path
-        expect(@settings.sidekiq_log).to eq(path)
+        @settings.sidekiq_log.should == path
       end
     end
   end

@@ -1,7 +1,7 @@
 require 'spec_helper'
 require Rails.root.join("spec", "shared_behaviors", "relayable")
 
-describe PollParticipation, :type => :model do
+describe PollParticipation do
   
   before do
     @alices_aspect = alice.aspects.first
@@ -44,19 +44,19 @@ describe PollParticipation, :type => :model do
     end
 
     it 'serializes the class name' do
-      expect(@xml.include?(PollParticipation.name.underscore.to_s)).to be true
+      @xml.include?(PollParticipation.name.underscore.to_s).should be_true
     end
 
     it 'serializes the sender handle' do
-      expect(@xml.include?(@poll_participation.diaspora_handle)).to be true
+      @xml.include?(@poll_participation.diaspora_handle).should be_true
     end
 
     it 'serializes the poll_guid' do
-      expect(@xml).to include(@poll.guid)
+      @xml.should include(@poll.guid)
     end
 
     it 'serializes the poll_answer_guid' do
-      expect(@xml).to include(@poll_participation.poll_answer.guid)
+      @xml.should include(@poll_participation.poll_answer.guid)
     end
 
     describe 'marshalling' do
@@ -65,15 +65,15 @@ describe PollParticipation, :type => :model do
       end
 
       it 'marshals the author' do
-        expect(@marshalled_poll_participation.author).to eq(@poll_participant.person)
+        @marshalled_poll_participation.author.should == @poll_participant.person
       end
 
       it 'marshals the answer' do
-        expect(@marshalled_poll_participation.poll_answer).to eq(@poll_participation.poll_answer)
+        @marshalled_poll_participation.poll_answer.should == @poll_participation.poll_answer
       end
 
       it 'marshals the poll' do
-        expect(@marshalled_poll_participation.poll).to eq(@poll)
+        @marshalled_poll_participation.poll.should == @poll
       end
     end
   end
@@ -94,8 +94,8 @@ describe PollParticipation, :type => :model do
 
     it 'is saved without errors in a simulated A-B node environment' do
       #stubs needed because the poll participation is already saved in the test db. This is just a simulated federation!
-      allow_any_instance_of(PollParticipation).to receive(:save!).and_return(true)
-      allow_any_instance_of(Person).to receive(:local?).and_return(false)
+      PollParticipation.any_instance.stub(:save!).and_return(true)
+      Person.any_instance.stub(:local?).and_return(false)
       expect{
         salmon = Salmon::Slap.create_by_user_and_activity(alice, @poll_participation_alice.to_diaspora_xml).xml_for(@poll_participant)
         Postzord::Receiver::Public.new(salmon).save_object

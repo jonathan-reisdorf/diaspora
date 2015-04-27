@@ -4,12 +4,12 @@
 
 require 'spec_helper'
 
-describe HomeController, :type => :controller do
+describe HomeController do
   describe '#show' do
     it 'does not redirect' do
       sign_out :user
       get :show
-      expect(response).not_to be_redirect
+      response.should_not be_redirect
     end
 
     context 'redirection' do
@@ -19,7 +19,7 @@ describe HomeController, :type => :controller do
 
       it 'points to the stream if a user has contacts' do
         get :show, :home => true
-        expect(response).to redirect_to(stream_path)
+        response.should redirect_to(stream_path)
       end
     end
   end
@@ -28,13 +28,13 @@ describe HomeController, :type => :controller do
     it 'changes :mobile to :html' do
       session[:mobile_view] = true
       get :toggle_mobile
-      expect(session[:mobile_view]).to be false
+      session[:mobile_view].should be_false
     end
 
     it 'changes :html to :mobile' do
       session[:mobile_view] = nil
       get :toggle_mobile
-      expect(session[:mobile_view]).to be true
+      session[:mobile_view].should be_true
     end
   end
 end

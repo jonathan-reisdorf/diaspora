@@ -7,8 +7,6 @@
   }
 }
 
-a.tag { color: $blue; }
-
 h1.tag {
   border-bottom: 2px dotted $blue;
   &:hover { border-bottom: 2px dotted $blue; }
@@ -20,20 +18,5 @@ h1.tag {
     color: $text-grey;
     border-bottom: 1px dotted $border-dark-grey;
     &:hover { border-bottom: 1px solid $border-dark-grey; }
-  }
-}
-
-#tags_show {
-  .span3 {
-    border-right: 1px solid $border-grey;
-    h4 { margin: 25px 0 15px; }
-    .side_stream #people_stream {
-      .name { display: block; }
-      .name, .diaspora_handle, .tags {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-    }
   }
 }

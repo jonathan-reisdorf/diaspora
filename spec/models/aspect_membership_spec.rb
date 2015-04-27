@@ -4,7 +4,7 @@
 #
 require 'spec_helper'
 
-describe AspectMembership, :type => :model do
+describe AspectMembership do
 
   describe '#before_destroy' do
     before do
@@ -12,17 +12,17 @@ describe AspectMembership, :type => :model do
       @contact = alice.contact_for(bob.person)
 
       @am = alice.aspects.where(:name => "generic").first.aspect_memberships.first
-      allow(@am).to receive(:user).and_return(alice)
+      @am.stub(:user).and_return(alice)
     end
 
     it 'calls disconnect if its the last aspect for the contact' do
-      expect(alice).to receive(:disconnect).with(@contact)
+      alice.should_receive(:disconnect).with(@contact)
 
       @am.destroy
     end
 
     it 'does not call disconnect if its not the last aspect for the contact' do
-      expect(alice).not_to receive(:disconnect)
+      alice.should_not_receive(:disconnect)
 
       alice.add_contact_to_aspect(@contact, @aspect)
       @am.destroy     

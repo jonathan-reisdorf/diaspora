@@ -187,7 +187,7 @@
 
       #invite_code {
         width: 100%;
-        box-sizing: border-box;
+        @include box-sizing(border-box);
       }
     }
   }

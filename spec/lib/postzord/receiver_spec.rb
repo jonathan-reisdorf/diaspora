@@ -11,11 +11,11 @@ describe Postzord::Receiver do
 
   describe "#perform!" do
     before do
-      allow(@receiver).to receive(:receive!).and_return(true)
+      @receiver.stub(:receive!).and_return(true)
     end
 
     it 'calls receive!' do
-      expect(@receiver).to receive(:receive!)
+      @receiver.should_receive(:receive!)
       @receiver.perform!
     end
   end

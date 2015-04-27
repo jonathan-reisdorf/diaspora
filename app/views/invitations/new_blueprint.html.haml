@@ -25,10 +25,10 @@
         %br
 
         %h4
-          = t('invitations.new.language')
+          = t('invitaitons.new.language')
         = select_tag('email_inviter[locale]',  options_from_collection_for_select(available_language_options, "second", "first", :selected => current_user.language))
 
         %br
 
         %p
-          = submit_tag t('invitations.new.send_an_invitation'), data: {disable_with: t('invitations.new.sending_invitation')}
+          = submit_tag t('invitations.new.send_an_invitation'), :disable_with => t('invitations.new.sending_invitation')

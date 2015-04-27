@@ -1,14 +1,8 @@
-// @license magnet:?xt=urn:btih:0b31508aeb0634b347b8270c7bee4d411b5d4109&dn=agpl-3.0.txt AGPL-v3-or-Later
-
 //= require ../collections/posts
 //= require ../collections/photos
 app.models.Stream = Backbone.Collection.extend({
   initialize : function(models, options){
-    var collectionClass = app.collections.Posts
-    if( options ) {
-      options.collection && (collectionClass = options.collection);
-      options.basePath && (this.streamPath = options.basePath);
-    }
+    var collectionClass = options && options.collection || app.collections.Posts;
     this.items = new collectionClass([], this.collectionOptions());
   },
 
@@ -25,12 +19,13 @@ app.models.Stream = Backbone.Collection.extend({
     var defaultOpts = {
       remove: false  // tell backbone to keep existing items in the collection
     };
-    return _.extend({ url: this.url() }, defaultOpts, opts);
+    return _.extend({}, defaultOpts, opts);
   },
 
   fetch: function() {
     if( this.isFetching() ) return false;
-    this.deferred = this.items.fetch( this._fetchOpts() )
+    var url = this.url();
+    this.deferred = this.items.fetch(this._fetchOpts({url : url}))
       .done(_.bind(this.triggerFetchedEvents, this));
   },
 
@@ -48,7 +43,7 @@ app.models.Stream = Backbone.Collection.extend({
   },
 
   basePath : function(){
-    return this.streamPath || document.location.pathname;
+    return document.location.pathname;
   },
 
   timeFilteredPath : function(){
@@ -93,5 +88,3 @@ app.models.Stream = Backbone.Collection.extend({
     this.trigger("fetched")
   }
 });
-// @license-end
-

@@ -1,7 +1,3 @@
-@import 'bootstrap-fix';
-
-@import 'perfect-scrollbar';
-
 @import "colors";
 @import 'mixins';
 @import 'new_styles/new_mixins';
@@ -12,8 +8,8 @@
 @import 'sprites';
 
 @import 'new_styles/base';
-@import 'new_styles/buttons';
-@import 'new_styles/interactions';
+@import 'new_styles/viewer_nav';
+@import 'buttons';
 
 /* font overrides */
 @import 'new_styles/typography';
@@ -24,9 +20,6 @@
 @import 'new_styles/landing';
 
 @import 'new_styles/forms';
-
-/* navs */
-@import 'new_styles/navs';
 
 /* profile and settings pages */
 @import 'new_styles/settings';
@@ -62,21 +55,11 @@
 /* people */
 @import 'people';
 @import 'invitations';
-@import 'profile';
 
 /* stream */
 @import 'tag';
 @import 'stream-faces';
-@import 'stream';
-@import 'stream_element';
-@import 'comments';
 
 /* contacts */
 @import 'contacts';
 @import 'leftnavbar';
-
-/* code */
-@import 'new_styles/code';
-
-/* statistics */
-@import 'new_styles/statistics'

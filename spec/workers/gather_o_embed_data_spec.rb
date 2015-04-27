@@ -32,7 +32,7 @@ describe Workers::GatherOEmbedData do
     it 'requests not data from the internet' do
       Workers::GatherOEmbedData.new.perform(@status_message.id, @flickr_photo_url)
 
-      expect(a_request(:get, @flickr_oembed_get_request)).to have_been_made
+      a_request(:get, @flickr_oembed_get_request).should have_been_made
     end
 
     it 'requests not data from the internet only once' do
@@ -40,7 +40,7 @@ describe Workers::GatherOEmbedData do
         Workers::GatherOEmbedData.new.perform(@status_message.id, @flickr_photo_url)
       end
 
-      expect(a_request(:get, @flickr_oembed_get_request)).to have_been_made.times(1)
+      a_request(:get, @flickr_oembed_get_request).should have_been_made.times(1)
     end
 
     it 'creates one cache entry' do
@@ -48,16 +48,16 @@ describe Workers::GatherOEmbedData do
 
       expected_data = @flickr_oembed_data
       expected_data['trusted_endpoint_url'] = @flickr_oembed_url
-      expect(OEmbedCache.find_by_url(@flickr_photo_url).data).to eq(expected_data)
+      OEmbedCache.find_by_url(@flickr_photo_url).data.should == expected_data
 
       Workers::GatherOEmbedData.new.perform(@status_message.id, @flickr_photo_url)
-      expect(OEmbedCache.where(url: @flickr_photo_url).count).to eq(1)
+      OEmbedCache.count(:conditions => {:url => @flickr_photo_url}).should == 1
     end
 
     it 'creates no cache entry for unsupported pages' do
       Workers::GatherOEmbedData.new.perform(@status_message.id, @no_oembed_url)
 
-      expect(OEmbedCache.find_by_url(@no_oembed_url)).to be_nil
+      OEmbedCache.find_by_url(@no_oembed_url).should be_nil
     end
 
     it 'gracefully handles a deleted post' do

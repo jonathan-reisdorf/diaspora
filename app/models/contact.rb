@@ -7,7 +7,7 @@ class Contact < ActiveRecord::Base
 
   belongs_to :person
   validates :person, :presence => true
-
+  
   delegate :name, :diaspora_handle, :guid, :first_name,
            to: :person, prefix: true
 
@@ -26,20 +26,26 @@ class Contact < ActiveRecord::Base
 
   before_destroy :destroy_notifications
 
-  scope :all_contacts_of_person, ->(x) { where(:person_id => x.id) }
+  scope :all_contacts_of_person, lambda {|x| where(:person_id => x.id)}
 
     # contact.sharing is true when contact.person is sharing with contact.user
-  scope :sharing, -> { where(:sharing => true) }
+  scope :sharing, lambda {
+    where(:sharing => true)
+  }
 
   # contact.receiving is true when contact.user is sharing with contact.person
-  scope :receiving, -> { where(:receiving => true) }
+  scope :receiving, lambda {
+    where(:receiving => true)
+  }
 
-  scope :for_a_stream, -> {
+  scope :for_a_stream, lambda {
     includes(:aspects, :person => :profile).
         order('profiles.last_name ASC')
   }
 
-  scope :only_sharing, -> { sharing.where(:receiving => false) }
+  scope :only_sharing, lambda {
+    sharing.where(:receiving => false)
+  }
 
   def destroy_notifications
     Notification.where(:target_type => "Person",
@@ -86,17 +92,6 @@ class Contact < ActiveRecord::Base
       aspects.detect{ |a| a.id == aspect.id }
     else
       AspectMembership.exists?(:contact_id => self.id, :aspect_id => aspect.id)
-    end
-  end
-
-  def self.contact_contacts_for(user, person)
-    return none unless user
-
-    if person == user.person
-      user.contact_people
-    else
-      contact = user.contact_for(person)
-      contact.try(:contacts) || none
     end
   end
 

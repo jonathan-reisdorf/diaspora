@@ -2,17 +2,17 @@
   .controls:first-child {
     .control_icon {
       @include transition(opacity);
-      opacity: 0;
+      @include opacity(0);
     }
   }
 
   &:hover {
     .controls:first-child {
       .control_icon {
-        opacity: 0.3;
+        @include opacity(0.3);
       }
       .control_icon:hover {
-        opacity: 1;
+        @include opacity(1);
       }
     }
   }

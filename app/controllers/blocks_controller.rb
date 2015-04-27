@@ -1,5 +1,5 @@
 class BlocksController < ApplicationController
-  before_action :authenticate_user!
+  before_filter :authenticate_user!
 
   respond_to :html, :json
 

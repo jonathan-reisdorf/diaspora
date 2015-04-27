@@ -1,5 +1,5 @@
 class SearchController < ApplicationController
-  before_action :authenticate_user!
+  before_filter :authenticate_user!
 	
   def search
     if search_query.starts_with?('#')
@@ -20,7 +20,7 @@ class SearchController < ApplicationController
   private
   
   def search_query
-    @search_query ||= (params[:q] || params[:term] || '').strip
+    @search_query ||= params[:q] || params[:term] || ''
   end
 
 end

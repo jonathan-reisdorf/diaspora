@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe NotificationsController, :type => :controller do
+describe NotificationsController do
   describe '#index' do
     before do
       sign_in :user, alice

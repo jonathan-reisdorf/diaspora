@@ -1,12 +1,18 @@
-// for docs, see http://jasmine.github.io
-
-var realXMLHttpRequest = window.XMLHttpRequest;
+// Add custom matchers here, in a beforeEach block. Example:
+//beforeEach(function() {
+//  this.addMatchers({
+//    toBePlaying: function(expectedSong) {
+//      var player = this.actual;
+//      return player.currentlyPlayingSong === expectedSong
+//          && player.isPlaying;
+//    }
+//  })
+//});
 
 beforeEach(function() {
   $('#jasmine_content').html(spec.readFixture("underscore_templates"));
+  jasmine.Clock.useMock();
 
-  jasmine.clock().install();
-  jasmine.Ajax.install();
 
   Diaspora.Pages.TestPage = function() {
     var self = this;
@@ -23,56 +29,43 @@ beforeEach(function() {
   Diaspora.page = new Page();
   Diaspora.page.publish("page/ready", [$(document.body)]);
 
+
+  // matches flash messages with success/error and contained text
+  var flashMatcher = function(flash, id, text) {
+    textContained = true;
+    if( text ) {
+      textContained = (flash.text().indexOf(text) !== -1);
+    }
+
+    return flash.is(id) &&
+           flash.hasClass('expose') &&
+           textContained;
+  };
+
   // add custom matchers for flash messages
-  jasmine.addMatchers(customMatchers);
+  this.addMatchers({
+    toBeSuccessFlashMessage: function(containedText) {
+      var flash = this.actual;
+      return flashMatcher(flash, '#flash_notice', containedText);
+    },
+
+    toBeErrorFlashMessage: function(containedText) {
+      var flash = this.actual;
+      return flashMatcher(flash, '#flash_error', containedText);
+    }
+  });
+
 });
 
 afterEach(function() {
   //spec.clearLiveEventBindings();
-
-  jasmine.clock().uninstall();
-  jasmine.Ajax.uninstall();
-
   $("#jasmine_content").empty()
   expect(spec.loadFixtureCount).toBeLessThan(2);
   spec.loadFixtureCount = 0;
 });
 
-
-// matches flash messages with success/error and contained text
-var flashMatcher = function(flash, id, text) {
-  textContained = true;
-  if( text ) {
-    textContained = (flash.text().indexOf(text) !== -1);
-  }
-
-  return flash.is(id) &&
-          flash.hasClass('expose') &&
-          textContained;
-};
-
 var context = describe;
 var spec = {};
-var customMatchers = {
-  toBeSuccessFlashMessage: function(util) {
-    return {
-      compare: function(actual, expected) {
-        var result = {};
-        result.pass = flashMatcher(actual, '#flash_notice', expected);
-        return result;
-      }
-    };
-  },
-  toBeErrorFlashMessage: function(util) {
-    return {
-      compare: function(actual, expected) {
-        var result = {};
-        result.pass = flashMatcher(actual, '#flash_error', expected);
-        return result;
-      }
-    };
-  }
-};
 
 window.stubView = function stubView(text){
   var stubClass = Backbone.View.extend({
@@ -166,7 +159,7 @@ spec.retrieveFixture = function(fixtureName) {
 
   // retrieve the fixture markup via xhr request to jasmine server
   try {
-    xhr = new realXMLHttpRequest();
+    xhr = new jasmine.XmlHttpRequest();
     xhr.open("GET", path, false);
     xhr.send(null);
   } catch(e) {

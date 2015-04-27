@@ -12,7 +12,7 @@ describe Diaspora::Markdownify::HTML do
 
       link = doc.css("a")
 
-      expect(link.attr("target").value).to eq("_blank")
+      link.attr("target").value.should == "_blank"
     end
   end
 end

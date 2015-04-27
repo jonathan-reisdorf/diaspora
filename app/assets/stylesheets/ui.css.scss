@@ -11,8 +11,9 @@ $button-border-color: #aaa;
 }
 
 .button {
+  @include border-radius(3px);
   @include button-gradient($light-grey);
-  box-shadow: 0 1px 1px #cfcfcf;
+  @include box-shadow(0,1px,1px,#cfcfcf);
   @include transition(border);
 
   display: inline;
@@ -29,7 +30,6 @@ $button-border-color: #aaa;
   min-height: 10px;
 
   border: 1px solid $button-border-color;
-  border-radius: 3px;
 
   cursor: pointer;
   white-space: nowrap;
@@ -112,7 +112,8 @@ input.button {
   }
 
   .wrapper {
-    box-shadow: 0 2px 5px #666;
+    @include box-shadow(0, 2px, 5px, #666);
+    //@include opacity(0)
     @include transition(opacity);
 
     display: none;
@@ -186,14 +187,14 @@ input.button {
 
   &.hang_right {
     .wrapper {
-      border-radius: 3px 0 3px 3px;
+      @include border-radius(3px, 0, 3px, 3px);
       right: 3px;
     }
   }
 
   &.hang_left {
     .wrapper {
-      border-radius: 0 3px 3px 3px;
+      @include border-radius(0, 3px, 3px, 3px);
       left: 0px;
     }
   }
@@ -204,11 +205,12 @@ input.button {
 
   &.active {
     .wrapper {
+      //@include opacity(1)
       display: block;
     }
 
     .button {
-      border-radius: 3px 3px 0 0;
+      @include border-radius(3px, 3px, 0, 0);
       border: 1px solid #444;
     }
 

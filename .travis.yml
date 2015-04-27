@@ -1,8 +1,12 @@
-language: ruby
+branches:
+  only:
+    - 'master'
+    - 'develop'
 
+language: ruby
 rvm:
-  - 2.1
-  - 2.0
+  - 2.0.0
+  - 1.9.3
 
 env:
   - DB=postgres BUILD_TYPE=other
@@ -10,17 +14,12 @@ env:
   - DB=postgres BUILD_TYPE=cucumber
   - DB=mysql BUILD_TYPE=cucumber
 
-sudo: false
-cache: bundler
 
-branches:
-  only:
-    - 'master'
-    - 'develop'
-
-bundler_args: "--without development production heroku --jobs 3 --retry 3"
-
+bundler_args: "--without development production heroku"
 script: "./script/ci/build.sh"
+
+addons:
+  firefox: "26.0"
 
 notifications:
   irc:

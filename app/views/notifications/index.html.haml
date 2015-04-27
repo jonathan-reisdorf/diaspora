@@ -20,12 +20,11 @@
                 - when 'liked'
                   %i.entypo.heart
                 - when 'mentioned'
-                  %span.mentionIcon
-                    @
+                  %i.entypo.pencil
                 - when 'reshared'
                   %i.entypo.retweet
                 - when 'started_sharing'
-                  %i.entypo.add-user
+                  %i.entypo.users
               = t('.'+key)
 
     .span9.stream.notifications

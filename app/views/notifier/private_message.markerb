@@ -1,4 +1,4 @@
-<%= post_message(@notification.message, :process_newlines => true) %>
+<%= post_message(@notification.message, :process_newlines => true, :length => 2000) %>
 
 [<%= t('.reply_to_or_view') %>][1]
 

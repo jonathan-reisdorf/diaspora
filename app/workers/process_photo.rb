@@ -16,7 +16,6 @@ module Workers
       photo.processed_image.store!(unprocessed_image)
 
       photo.save!
-    rescue ActiveRecord::RecordNotFound # Deleted before the job was run
     end
   end
 end

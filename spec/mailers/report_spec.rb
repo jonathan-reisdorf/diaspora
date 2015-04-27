@@ -4,7 +4,7 @@
 
 require 'spec_helper'
 
-describe Report, :type => :mailer do
+describe Report do
   describe '#make_notification' do
     before do
       @remote = FactoryGirl.create(:person, :diaspora_handle => "remote@remote.net")

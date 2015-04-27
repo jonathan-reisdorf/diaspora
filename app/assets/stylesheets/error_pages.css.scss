@@ -11,7 +11,7 @@
   color: #ddd;
 }
 .transparent {
-  opacity: 0.8;
+  @include opacity(0.8);
 }
 #content {
   font-family: Roboto, Helvetica, Arial, sans-serif;

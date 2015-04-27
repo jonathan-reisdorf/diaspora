@@ -42,20 +42,18 @@ Feature: preview posts in the stream
 
     Scenario: preview a photo with text
       Given I expand the publisher
-      And I attach "spec/fixtures/button.png" to the publisher
+      When I attach the file "spec/fixtures/button.png" to hidden "file" within "#file-upload"
       When I fill in the following:
           | status_message_fake_text    | Look at this dog    |
       And I press "Preview"
       Then I should see a "img" within ".stream_element div.photo_attachments"
       And I should see "Look at this dog" within ".stream_element"
-      And I close the publisher
 
     Scenario: preview a post with mentions
       Given I expand the publisher
       And I mention Alice in the publisher
       And I press "Preview"
       And I follow "Alice Smith"
-      And I confirm the alert
       Then I should see "Alice Smith"
 
     Scenario: preview a post on tag page
@@ -69,7 +67,6 @@ Feature: preview posts in the stream
       And I press "Preview"
       Then "This preview rocks" should be post 1
       And the first post should be a preview
-      And I close the publisher
 
     Scenario: preview a post with the poll
       Given I expand the publisher
@@ -85,4 +82,3 @@ Feature: preview posts in the stream
       And I press "Preview"
       Then I should see a ".poll_form" within ".stream_element"
       And I should see a "form" within ".stream_element"
-      And I close the publisher

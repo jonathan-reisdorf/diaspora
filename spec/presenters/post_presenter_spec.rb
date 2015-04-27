@@ -9,38 +9,38 @@ describe PostPresenter do
   end
 
   it 'takes a post and an optional user' do
-    expect(@presenter).not_to be_nil
+    @presenter.should_not be_nil
   end
 
   describe '#as_json' do
     it 'works with a user' do
-      expect(@presenter.as_json).to be_a Hash
+      @presenter.as_json.should be_a Hash
     end
 
     it 'works without a user' do
-      expect(@unauthenticated_presenter.as_json).to be_a Hash
+      @unauthenticated_presenter.as_json.should be_a Hash
     end
   end
 
   describe '#user_like' do
     it 'includes the users like' do
       bob.like!(@sm)
-      expect(@presenter.user_like).to be_present
+      @presenter.user_like.should be_present
     end
 
     it 'is nil if the user is not authenticated' do
-      expect(@unauthenticated_presenter.user_like).to be_nil
+      @unauthenticated_presenter.user_like.should be_nil
     end
   end
 
   describe '#user_reshare' do
     it 'includes the users reshare' do
       bob.reshare!(@sm)
-      expect(@presenter.user_reshare).to be_present
+      @presenter.user_reshare.should be_present
     end
 
     it 'is nil if the user is not authenticated' do
-      expect(@unauthenticated_presenter.user_reshare).to be_nil
+      @unauthenticated_presenter.user_reshare.should be_nil
     end
   end
 
@@ -68,7 +68,7 @@ describe PostPresenter do
     context 'with posts with text' do
       it "delegates to message.title" do
         message = double(present?: true)
-        expect(message).to receive(:title)
+        message.should_receive(:title)
         @presenter.post = double(message: message)
         @presenter.title
       end
@@ -78,7 +78,7 @@ describe PostPresenter do
       it ' displays a messaage with the post class' do
         @sm = double(message: double(present?: false), author: bob.person, author_name: bob.person.name)
         @presenter.post = @sm
-        expect(@presenter.title).to eq("A post from #{@sm.author.name}")
+        @presenter.title.should == "A post from #{@sm.author.name}"
       end
     end
   end
@@ -86,7 +86,7 @@ describe PostPresenter do
   describe '#poll' do
     it 'works without a user' do
       presenter = PostPresenter.new(@sm_with_poll)
-      expect(presenter.as_json).to be_a(Hash)
+      presenter.as_json.should be_a(Hash)
     end
   end
 end

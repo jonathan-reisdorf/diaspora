@@ -7,7 +7,7 @@ class CommentPresenter < BasePresenter
     {
       :id => @comment.id,
       :guid => @comment.guid,
-      :text  => @comment.message.plain_text_for_json,
+      :text  => @comment.text,
       :author => @comment.author.as_api_response(:backbone),
       :created_at => @comment.created_at
     }

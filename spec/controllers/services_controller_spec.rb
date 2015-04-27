@@ -4,18 +4,18 @@
 
 require 'spec_helper'
 
-describe ServicesController, :type => :controller do
+describe ServicesController do
   let(:omniauth_auth) do
     { 'provider' => 'facebook',
       'uid'      => '2',
-      'info'   => { 'nickname' => 'grimmin', 'image' => 'http://graph.facebook.com/2/picture' },
+      'info'   => { 'nickname' => 'grimmin' },
       'credentials' => { 'token' => 'tokin', 'secret' =>"not_so_much" }}
     end
   let(:user) { alice }
 
   before do
     sign_in :user, user
-    allow(@controller).to receive(:current_user).and_return(user)
+    @controller.stub(:current_user).and_return(user)
   end
 
   describe '#index' do
@@ -25,7 +25,7 @@ describe ServicesController, :type => :controller do
 
     it "displays user's connected services" do
       get :index
-      expect(assigns[:services]).to eq(user.services)
+      assigns[:services].should == user.services
     end
   end
 
@@ -43,31 +43,22 @@ describe ServicesController, :type => :controller do
 
     it 'saves the provider' do
       post :create, :provider => 'facebook'
-      expect(user.reload.services.first.class.name).to eq("Services::Facebook")
-    end
-
-    context "when the user hasn't got a profile photo on Diaspora" do
-      before { user.person.profile.update_attribute :image_url, nil }
-
-      it "imports the profile photo from the service" do
-        expect(Workers::FetchProfilePhoto).to receive(:perform_async)
-        post :create, :provider => 'facebook'
-      end
+      user.reload.services.first.class.name.should == "Services::Facebook"
     end
 
     context 'when service exists with the same uid' do
       before { Services::Twitter.create!(uid: omniauth_auth['uid'], user_id: user.id) }
 
       it 'doesnt create a new service' do
-        service_count = Service.count
+        expect {
         post :create, :provider => 'twitter'
-        expect(Service.count).to eq(service_count)
+      }.to_not change(Service, :count).by(1)
       end
 
       it 'flashes an already_authorized error with the diaspora handle for the user'  do
         post :create, :provider => 'twitter'
-        expect(flash[:error].include?(user.profile.diaspora_handle)).to be true
-        expect(flash[:error].include?( 'already authorized' )).to be true
+        flash[:error].include?(user.profile.diaspora_handle).should be_true
+        flash[:error].include?( 'already authorized' ).should be_true
       end
     end
 
@@ -80,19 +71,19 @@ describe ServicesController, :type => :controller do
         let(:provider) { {'provider' => 'twitter'} }
 
         before do 
-          allow(access_token).to receive_message_chain(:response, :header).and_return header
+          access_token.stub_chain(:response, :header).and_return header
           request.env['omniauth.auth'] = omniauth_auth.merge!( provider).merge!( extra )
         end
 
         it 'doesnt create a new service' do
-          service_count = Service.count
-          post :create, :provider => 'twitter'
-          expect(Service.count).to eq(service_count)
+          expect {
+            post :create, :provider => 'twitter'
+          }.to_not change(Service, :count).by(1)
         end
 
         it 'flashes an read-only access error'  do
           post :create, :provider => 'twitter'
-          expect(flash[:error].include?( 'Access level is read-only' )).to be true
+          flash[:error].include?( 'Access level is read-only' ).should be_true
         end
       end
     end
@@ -119,17 +110,17 @@ describe ServicesController, :type => :controller do
       end
 
       it 'does not queue a job if the profile photo is set' do
-        allow(@controller).to receive(:no_profile_image?).and_return false
+        @controller.stub(:no_profile_image?).and_return false
 
-        expect(Workers::FetchProfilePhoto).not_to receive(:perform_async)
+        Workers::FetchProfilePhoto.should_not_receive(:perform_async)
 
         post :create, :provider => 'twitter'
       end
 
       it 'queues a job to save user photo if the photo does not exist' do
-        allow(@controller).to receive(:no_profile_image?).and_return true
+        @controller.stub(:no_profile_image?).and_return true
 
-        expect(Workers::FetchProfilePhoto).to receive(:perform_async).with(user.id, anything(), "https://service.com/fallback_lowres.jpg")
+        Workers::FetchProfilePhoto.should_receive(:perform_async).with(user.id, anything(), "https://service.com/fallback_lowres.jpg")
 
         post :create, :provider => 'twitter'
       end
@@ -142,9 +133,9 @@ describe ServicesController, :type => :controller do
     end
 
     it 'destroys a service selected by id' do
-      expect{
+      lambda{
         delete :destroy, :id => @service1.id
-      }.to change(user.services, :count).by(-1)
+      }.should change(user.services, :count).by(-1)
     end
   end
 end

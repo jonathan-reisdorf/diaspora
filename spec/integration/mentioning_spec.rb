@@ -3,7 +3,7 @@ require 'spec_helper'
 
 module MentioningSpecHelpers
   def default_aspect
-    @user1.aspects.where(name: 'generic').first
+    @user1.aspects.where(name: 'generic')
   end
 
   def text_mentioning(user)
@@ -26,7 +26,7 @@ module MentioningSpecHelpers
 end
 
 
-describe 'mentioning', :type => :request do
+describe 'mentioning' do
   include MentioningSpecHelpers
 
   before do
@@ -39,20 +39,20 @@ describe 'mentioning', :type => :request do
 
   # see: https://github.com/diaspora/diaspora/issues/4160
   it 'only mentions people that are in the target aspect' do
-    expect(users_connected?(@user1, @user2)).to be true
-    expect(users_connected?(@user1, @user3)).to be false
+    users_connected?(@user1, @user2).should be_true
+    users_connected?(@user1, @user3).should be_false
 
     status_msg = nil
-    expect do
+    lambda do
       status_msg = @user1.post(:status_message, {text: text_mentioning(@user3), to: default_aspect})
-    end.to change(Post, :count).by(1)
+    end.should change(Post, :count).by(1)
 
-    expect(status_msg).not_to be_nil
-    expect(status_msg.public?).to be false
-    expect(status_msg.text).to include(@user3.name)
+    status_msg.should_not be_nil
+    status_msg.public?.should be_false
+    status_msg.text.should include(@user3.name)
 
-    expect(notifications_about_mentioning(@user3)).to be_empty
-    expect(stream_for(@user3).map { |item| item.id }).not_to include(status_msg.id)
+    notifications_about_mentioning(@user3).should be_empty
+    stream_for(@user3).map { |item| item.id }.should_not include(status_msg.id)
   end
 
 end

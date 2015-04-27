@@ -3,4 +3,5 @@
  *   the COPYRIGHT file.
  */
 
+//= require aspect-edit-pane
 //= require fileuploader-custom

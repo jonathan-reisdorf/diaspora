@@ -3,10 +3,8 @@
 #   the COPYRIGHT file.
 
 class PhotosController < ApplicationController
-  before_action :authenticate_user!, :except => :show
+  before_filter :authenticate_user!, :except => :show
 
-  layout ->(c){ request.format == :mobile ? "application" : "with_header_with_footer" }
-  use_bootstrap_for :index
   respond_to :html, :json
 
   def show
@@ -25,20 +23,21 @@ class PhotosController < ApplicationController
 
     if @person
       @contact = current_user.contact_for(@person)
-      @posts = current_user.photos_from(@person, max_time: max_time).order('created_at desc')
+
+      if @contact
+        @contacts_of_contact = @contact.contacts
+        @contacts_of_contact_count = @contact.contacts.count
+      else
+        @contact = Contact.new
+      end
+
+      @posts = current_user.photos_from(@person, max_time: max_time)
+
       respond_to do |format|
-        format.all do
-          gon.preloads[:person] = PersonPresenter.new(@person, current_user).full_hash_with_profile
-          gon.preloads[:photos] = {
-            count: @posts.count(:all),
-          }
-          gon.preloads[:contacts] = {
-            count: Contact.contact_contacts_for(current_user, @person).count(:all),
-          }
-          render 'people/show'
-        end
+        format.all { render 'people/show' }
         format.json{ render_for_api :backbone, :json => @posts, :root => :photos }
       end
+
     else
       flash[:error] = I18n.t 'people.show.does_not_exist'
       redirect_to people_path

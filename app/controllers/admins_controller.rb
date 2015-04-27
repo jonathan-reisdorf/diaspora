@@ -41,12 +41,12 @@ class AdminsController < Admin::AdminController
       @created_users_by_week[week] << u.username
     end
 
-    @selected_week = params[:week] || @created_users_by_week.keys.last
+    @selected_week = params[:week] || @created_users_by_week.keys.first
     @counter = @created_users_by_week[@selected_week].count
   end
 
   def stats
-    @popular_tags = ActsAsTaggableOn::Tagging.joins(:tag).limit(50).order('count(taggings.id) DESC').group(:tag).count
+    @popular_tags = ActsAsTaggableOn::Tagging.joins(:tag).limit(50).count(:group => :tag, :order => 'count(taggings.id) DESC')
 
     case params[:range]
     when "week"
@@ -67,7 +67,7 @@ class AdminsController < Admin::AdminController
       create_hash(model, :range => range)
     end
 
-    @posts_per_day = Post.where("created_at >= ?", Date.today - 21.days).group("DATE(created_at)").order("DATE(created_at) ASC").count
+    @posts_per_day = Post.count(:group => "DATE(created_at)", :conditions => ["created_at >= ?", Date.today - 21.days], :order => "DATE(created_at) ASC")
     @most_posts_within = @posts_per_day.values.max.to_f
 
     @user_count = User.count
@@ -101,10 +101,12 @@ DATA
   end
 
 
+  # TODO action needed after rails4 update
   class UserSearch
-    include ActiveModel::Model
+    #include ActiveModel::Model  # rails4
     include ActiveModel::Conversion
     include ActiveModel::Validations
+    include ActiveModel::MassAssignmentSecurity
 
     attr_accessor :username, :email, :guid, :under13
 
@@ -115,20 +117,26 @@ DATA
       yield(self) if block_given?
     end
 
-    def assign_attributes(values)
-      values.each do |k, v|
-        public_send("#{k}=", v)
+    def assign_attributes(values, options={})
+      sanitize_for_mass_assignment(values, options[:as]).each do |k, v|
+        send("#{k}=", v)
       end
     end
 
+    # TODO remove this once ActiveModel is included
+    def persisted?
+      false
+    end
+
     def any_searchfield_present?
-      if %w(username email guid under13).all? { |attr| public_send(attr).blank? }
+      if %w(username email guid under13).all? { |attr| self.send(attr).blank? }
         errors.add :base, "no fields for search set"
       end
     end
 
     def perform
-      return User.none unless valid?
+      #return User.none unless valid?  # rails4
+      return [] unless valid?
 
       users = User.arel_table
       people = Person.arel_table

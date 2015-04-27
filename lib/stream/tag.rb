@@ -38,9 +38,13 @@ class Stream::Tag < Stream::Base
 
   private
 
+  def tag_prefill_text
+    I18n.translate('streams.tags.tag_prefill_text', :tag_name => display_tag_name)
+  end
+
   # @return [Hash]
   def publisher_opts
-    {:open => true}
+    {:prefill => "#{tag_prefill_text}", :open => true}
   end
 
   def construct_post_query

@@ -12,7 +12,6 @@
 src_files:
   # Precompile all scripts together for the test environment
   - assets/jasmine-load-all.js
-  - assets/jasmine-jquery.js
 
 # stylesheets
 #

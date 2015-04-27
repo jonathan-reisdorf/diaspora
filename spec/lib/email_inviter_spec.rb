@@ -9,53 +9,53 @@ describe EmailInviter do
 
   it 'has a list of emails' do 
     inviter = EmailInviter.new(@emails, @user)
-    expect(inviter.emails).not_to be_empty
+    inviter.emails.should_not be_empty
   end
 
   it 'should parse three emails' do
     inviter = EmailInviter.new(@emails, @user)
-    expect(inviter.emails.count).to eq(3)
+    inviter.emails.count.should == 3
   end
 
   it 'has an inviter' do
     inviter = EmailInviter.new(@emails, @user)
-    expect(inviter.inviter).not_to be_nil
+    inviter.inviter.should_not be_nil
   end
 
   it 'can have a message' do
     message = "you guys suck hard"
     inviter = EmailInviter.new("emails", @user, :message =>  message)
-    expect(inviter.message).to eq(message) 
+    inviter.message.should == message 
   end
 
   describe '#emails' do
     it 'rejects the inviter email if present' do
       inviter = EmailInviter.new(@emails + " #{@user.email}", @user)
-      expect(inviter.emails).not_to include(@user.email)
+      inviter.emails.should_not include(@user.email)
     end
   end
 
   describe 'language' do
     it 'defaults to english' do
       inviter = EmailInviter.new(@emails, @user)
-      expect(inviter.locale).to eq('en')
+      inviter.locale.should == 'en'
     end
 
     it 'should symbolize keys' do
       inviter = EmailInviter.new(@emails, @user, 'locale' => 'es')
-      expect(inviter.locale).to eq('es')
+      inviter.locale.should == 'es'
     end
 
     it 'listens to the langauge option' do
       inviter = EmailInviter.new(@emails, @user, :locale => 'es')
-      expect(inviter.locale).to eq('es')
+      inviter.locale.should == 'es'
     end
   end
 
   describe '#invitation_code' do
     it 'delegates to the user' do
       inviter = EmailInviter.new(@emails, @user)
-      expect(inviter.invitation_code).to eq(@user.invitation_code)
+      inviter.invitation_code.should == @user.invitation_code
     end
   end
 end

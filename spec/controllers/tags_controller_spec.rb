@@ -4,7 +4,7 @@
 
 require 'spec_helper'
 
-describe TagsController, :type => :controller do
+describe TagsController do
   describe '#index (search)' do
     before do
       sign_in :user, alice
@@ -16,22 +16,22 @@ describe TagsController, :type => :controller do
     it 'responds with json' do
       get :index, :q => "ra", :format => 'json'
       #parse json
-      expect(response.body).to include("#rad")
+      response.body.should include("#rad")
     end
 
     it 'requires at least two characters' do
       get :index, :q => "c", :format => 'json'
-      expect(response.body).not_to include("#cats")
+      response.body.should_not include("#cats")
     end
 
     it 'redirects the aimless to excellent parties' do
       get :index
-      expect(response).to redirect_to tag_path('partytimeexcellent')
+      response.should redirect_to tag_path('partytimeexcellent')
     end
 
     it 'does not allow json requestors to party' do
       get :index, :format => :json
-      expect(response.status).to eq(422)
+      response.status.should == 422
     end
   end
 
@@ -43,70 +43,40 @@ describe TagsController, :type => :controller do
 
       it 'redirect to the downcase tag uri' do
         get :show, :name => 'DiasporaRocks!'
-        expect(response).to redirect_to(:action => :show, :name => 'diasporarocks!')
+        response.should redirect_to(:action => :show, :name => 'diasporarocks!')
       end
     end
 
-    context 'with a tagged user' do
+    context 'signed in' do
       before do
-        bob.profile.tag_string = "#cats #diaspora #rad"
-        bob.profile.build_tags
-        bob.profile.save!
+        sign_in :user, alice
       end
 
-      it 'includes the tagged user' do
-        get :show, :name => 'cats'
-        expect(response.body).to include(bob.diaspora_handle)
+      it 'assigns a Stream::Tag object with the current_user' do
+        get :show, :name => 'yes'
+        assigns[:stream].user.should == alice
+      end
+
+      it 'succeeds' do
+        get :show, :name => 'hellyes'
+        response.status.should == 200
       end
     end
 
-    context 'with a tagged post' do
-      before do
-        @post = eve.post(:status_message, text: "#what #yes #hellyes #foo tagged post", public: true, to: 'all')
+    context "not signed in" do
+      it 'assigns a Stream::Tag object with no user' do
+        get :show, :name => 'yes'
+        assigns[:stream].user.should be_nil
       end
 
-      context 'signed in' do
-        before do
-          sign_in :user, alice
-        end
-
-        it 'assigns a Stream::Tag object with the current_user' do
-          get :show, :name => 'yes'
-          expect(assigns[:stream].user).to eq(alice)
-        end
-
-        it 'succeeds' do
-          get :show, :name => 'hellyes'
-          expect(response.status).to eq(200)
-        end
-
-        it 'includes the tagged post' do
-          get :show, :name => 'foo'
-          expect(assigns[:stream].posts.first.text).to include("tagged post")
-        end
-
-        it 'includes comments of the tagged post' do
-          alice.comment!(@post, "comment on a tagged post")
-          get :show, :name => 'foo', :format => 'json'
-          expect(response.body).to include("comment on a tagged post")
-        end
+      it 'succeeds' do
+        get :show, :name => 'hellyes'
+        response.status.should == 200
       end
 
-      context "not signed in" do
-        it 'assigns a Stream::Tag object with no user' do
-          get :show, :name => 'yes'
-          expect(assigns[:stream].user).to be_nil
-        end
-
-        it 'succeeds' do
-          get :show, :name => 'hellyes'
-          expect(response.status).to eq(200)
-        end
-
-        it 'succeeds with mobile' do
-          get :show, :name => 'foo', :format => :mobile
-          expect(response).to be_success
-        end
+      it 'succeeds with mobile' do 
+        get :show, :name => 'foo', :format => :mobile
+        response.should be_success
       end
     end
   end
@@ -116,17 +86,17 @@ describe TagsController, :type => :controller do
       before do
         sign_in bob
         @tag = ActsAsTaggableOn::Tag.create!(:name => "partytimeexcellent")
-        allow(@controller).to receive(:current_user).and_return(bob)
-        allow(@controller).to receive(:params).and_return({:name => "PARTYTIMEexcellent"})
+        @controller.stub(:current_user).and_return(bob)
+        @controller.stub(:params).and_return({:name => "PARTYTIMEexcellent"})
       end
 
       it 'returns true if the following already exists and should be case insensitive' do
         TagFollowing.create!(:tag => @tag, :user => bob )
-        expect(@controller.send(:tag_followed?)).to be true
+        @controller.send(:tag_followed?).should be_true
       end
 
       it 'returns false if the following does not already exist' do
-        expect(@controller.send(:tag_followed?)).to be false
+        @controller.send(:tag_followed?).should be_false
       end
     end
   end

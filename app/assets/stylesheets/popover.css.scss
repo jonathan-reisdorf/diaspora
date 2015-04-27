@@ -1,6 +1,6 @@
 .popover {
   .close {
-    opacity: 0;
+    @include opacity(0);
     @include transition(opacity, 0.2s);
     position: relative;
     top: 1px;
@@ -16,9 +16,9 @@
 
   &:hover {
     .close {
-      opacity: 0.5;
+      @include opacity(0.5);
 
-      &:hover { opacity: 1; }
+      &:hover { @include opacity(1); }
     }
   }
 }

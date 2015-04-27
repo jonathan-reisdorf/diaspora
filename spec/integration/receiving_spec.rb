@@ -4,7 +4,7 @@
 
 require 'spec_helper'
 
-describe 'a user receives a post', :type => :request do
+describe 'a user receives a post' do
 
   def receive_with_zord(user, person, xml)
     zord = Postzord::Receiver::Private.new(user, :person => person)
@@ -26,9 +26,9 @@ describe 'a user receives a post', :type => :request do
     bob.delete
     status_message.destroy
 
-    expect {
+    lambda {
       receive_with_zord(alice, bob.person, xml)
-    }.to change(Post,:count).by(1)
+    }.should change(Post,:count).by(1)
   end
 
   it 'should not create new aspects on message receive' do
@@ -38,7 +38,7 @@ describe 'a user receives a post', :type => :request do
       status_message = bob.post :status_message, :text => "store this #{n}!", :to => @bobs_aspect.id
     end
 
-    expect(alice.aspects.size).to eq(num_aspects)
+    alice.aspects.size.should == num_aspects
   end
 
   it "should show bob's post to alice" do
@@ -51,13 +51,13 @@ describe 'a user receives a post', :type => :request do
       bob.dispatch_post(sm, :to => @bobs_aspect)
     end
 
-    expect(alice.visible_shareables(Post).count(:all)).to eq(1)
+    alice.visible_shareables(Post).count.should == 1
   end
 
   context 'with mentions, ' do
     it 'adds the notifications for the mentioned users regardless of the order they are received' do
-      expect(Notification).to receive(:notify).with(alice, anything(), bob.person)
-      expect(Notification).to receive(:notify).with(eve, anything(), bob.person)
+      Notification.should_receive(:notify).with(alice, anything(), bob.person)
+      Notification.should_receive(:notify).with(eve, anything(), bob.person)
 
       @sm = bob.build_post(:status_message, :text => "@{#{alice.name}; #{alice.diaspora_handle}} stuff @{#{eve.name}; #{eve.diaspora_handle}}")
       bob.add_to_streams(@sm, [bob.aspects.first])
@@ -74,7 +74,7 @@ describe 'a user receives a post', :type => :request do
       @remote_person = FactoryGirl.create(:person, :diaspora_handle => "foobar@foobar.com")
       Contact.create!(:user => alice, :person => @remote_person, :aspects => [@alices_aspect])
 
-      expect(Notification).to receive(:notify).with(alice, anything(), @remote_person)
+      Notification.should_receive(:notify).with(alice, anything(), @remote_person)
 
       @sm = FactoryGirl.create(:status_message, :text => "hello @{#{alice.name}; #{alice.diaspora_handle}}", :diaspora_handle => @remote_person.diaspora_handle, :author => @remote_person)
       @sm.save
@@ -84,7 +84,7 @@ describe 'a user receives a post', :type => :request do
     end
 
     it 'does not notify the mentioned user if the mentioned user is not friends with the post author' do
-      expect(Notification).not_to receive(:notify).with(alice, anything(), eve.person)
+      Notification.should_not_receive(:notify).with(alice, anything(), eve.person)
 
       @sm = eve.build_post(:status_message, :text => "should not notify @{#{alice.name}; #{alice.diaspora_handle}}")
       eve.add_to_streams(@sm, [eve.aspects.first])
@@ -103,7 +103,7 @@ describe 'a user receives a post', :type => :request do
 
       receive_with_zord(bob, alice.person, xml)
 
-      expect(status.reload.text).to eq('store this!')
+      status.reload.text.should == 'store this!'
     end
 
     it 'updates posts marked as mutable' do
@@ -114,7 +114,7 @@ describe 'a user receives a post', :type => :request do
 
       receive_with_zord(bob, alice.person, xml)
 
-      expect(photo.reload.text).to match(/foo/)
+      photo.reload.text.should match(/foo/)
     end
   end
 
@@ -127,7 +127,7 @@ describe 'a user receives a post', :type => :request do
 
      p.tag_string = "#big #rafi #style"
      p.receive(luke, raph)
-     expect(p.tags(true).count).to eq(3)
+     p.tags(true).count.should == 3
    end
   end
 
@@ -140,14 +140,14 @@ describe 'a user receives a post', :type => :request do
     end
 
     it "adds a received post to the the contact" do
-      expect(alice.visible_shareables(Post)).to include(@status_message)
-      expect(@contact.posts).to include(@status_message)
+      alice.visible_shareables(Post).should include(@status_message)
+      @contact.posts.should include(@status_message)
     end
 
     it 'removes posts upon forceful removal' do
       alice.remove_contact(@contact, :force => true)
       alice.reload
-      expect(alice.visible_shareables(Post)).not_to include @status_message
+      alice.visible_shareables(Post).should_not include @status_message
     end
 
     context 'dependent delete' do
@@ -156,16 +156,16 @@ describe 'a user receives a post', :type => :request do
         alice.contacts.create(:person => @person, :aspects => [@alices_aspect])
 
         @post = FactoryGirl.create(:status_message, :author => @person)
-        expect(@post.share_visibilities).to be_empty
+        @post.share_visibilities.should be_empty
         receive_with_zord(alice, @person, @post.to_diaspora_xml)
         @contact = alice.contact_for(@person)
         @contact.share_visibilities.reset
-        expect(@contact.posts(true)).to include(@post)
+        @contact.posts(true).should include(@post)
         @post.share_visibilities.reset
 
-        expect {
+        lambda {
           alice.disconnected_by(@person)
-        }.to change{@post.share_visibilities(true).count}.by(-1)
+        }.should change{@post.share_visibilities(true).count}.by(-1)
       end
     end
   end
@@ -200,21 +200,21 @@ describe 'a user receives a post', :type => :request do
       end
 
       it 'should receive a relayed comment with leading whitespace' do
-        expect(eve.reload.visible_shareables(Post).size).to eq(1)
+        eve.reload.visible_shareables(Post).size.should == 1
         post_in_db = StatusMessage.find(@post.id)
-        expect(post_in_db.comments).to eq([])
+        post_in_db.comments.should == []
         receive_with_zord(eve, alice.person, @xml_with_whitespace)
 
-        expect(post_in_db.comments(true).first.guid).to eq(@guid_with_whitespace)
+        post_in_db.comments(true).first.guid.should == @guid_with_whitespace
       end
 
       it 'should correctly attach the user already on the pod' do
-        expect(bob.reload.visible_shareables(Post).size).to eq(1)
+        bob.reload.visible_shareables(Post).size.should == 1
         post_in_db = StatusMessage.find(@post.id)
-        expect(post_in_db.comments).to eq([])
+        post_in_db.comments.should == []
         receive_with_zord(bob, alice.person, @xml)
 
-        expect(post_in_db.comments(true).first.author).to eq(eve.person)
+        post_in_db.comments(true).first.author.should == eve.person
       end
 
       it 'should correctly marshal a stranger for the downstream user' do
@@ -226,18 +226,20 @@ describe 'a user receives a post', :type => :request do
         remote_person.attributes.delete(:id) # leaving a nil id causes it to try to save with id set to NULL in postgres
 
         m = double()
-        expect(Webfinger).to receive(:new).twice.with(eve.person.diaspora_handle).and_return(m)
-        remote_person.save(:validate => false)
-        remote_person.profile = FactoryGirl.create(:profile, :person => remote_person)
-        expect(m).to receive(:fetch).twice.and_return(remote_person)
+        Webfinger.should_receive(:new).twice.with(eve.person.diaspora_handle).and_return(m)
+        m.should_receive(:fetch).twice.and_return{
+          remote_person.save(:validate => false)
+          remote_person.profile = FactoryGirl.create(:profile, :person => remote_person)
+          remote_person
+        }
 
-        expect(bob.reload.visible_shareables(Post).size).to eq(1)
+        bob.reload.visible_shareables(Post).size.should == 1
         post_in_db = StatusMessage.find(@post.id)
-        expect(post_in_db.comments).to eq([])
+        post_in_db.comments.should == []
 
         receive_with_zord(bob, alice.person, @xml)
 
-        expect(post_in_db.comments(true).first.author).to eq(remote_person)
+        post_in_db.comments(true).first.author.should == remote_person
       end
     end
 
@@ -257,7 +259,7 @@ describe 'a user receives a post', :type => :request do
         inlined_jobs do
           @comment = bob.comment!(@post, 'tada')
           @xml = @comment.to_diaspora_xml
-
+            
           expect {
             receive_with_zord(alice, bob.person, @xml)
           }.to_not raise_exception
@@ -279,8 +281,8 @@ describe 'a user receives a post', :type => :request do
       receive_with_zord(@local_luke, @remote_raphael, xml)
       old_time = Time.now+1
       receive_with_zord(@local_leia, @remote_raphael, xml)
-      expect((Post.find_by_guid @post.guid).updated_at).to be < old_time
-      expect((Post.find_by_guid @post.guid).created_at).to be < old_time
+      (Post.find_by_guid @post.guid).updated_at.should be < old_time
+      (Post.find_by_guid @post.guid).created_at.should be < old_time
     end
 
     it 'does not update the post if a new one is sent with a new created_at' do
@@ -290,7 +292,7 @@ describe 'a user receives a post', :type => :request do
       receive_with_zord(@local_luke, @remote_raphael, xml)
       @post = FactoryGirl.build(:status_message, :text => 'hey', :guid => '12313123', :author => @remote_raphael, :created_at => 2.days.ago)
       receive_with_zord(@local_luke, @remote_raphael, xml)
-      expect((Post.find_by_guid @post.guid).created_at.day).to eq(old_time.day)
+      (Post.find_by_guid @post.guid).created_at.day.should == old_time.day
     end
   end
 
@@ -305,7 +307,7 @@ describe 'a user receives a post', :type => :request do
       zord = Postzord::Receiver::Private.new(bob, :salmon_xml => salmon_xml)
       zord.perform!
 
-      expect(bob.visible_shareables(Post).include?(post)).to be true
+      bob.visible_shareables(Post).include?(post).should be_true
     end
   end
 
@@ -360,14 +362,15 @@ describe 'a user receives a post', :type => :request do
 
     #Build xml for profile
     xml = new_profile.to_diaspora_xml
+
     #Marshal profile
     zord = Postzord::Receiver::Private.new(alice, :person => person)
     zord.parse_and_receive(xml)
 
     #Check that marshaled profile is the same as old profile
     person = Person.find(person.id)
-    expect(person.profile.first_name).to eq(new_profile.first_name)
-    expect(person.profile.last_name).to eq(new_profile.last_name)
-    expect(person.profile.image_url).to eq(new_profile.image_url)
+    person.profile.first_name.should == new_profile.first_name
+    person.profile.last_name.should == new_profile.last_name
+    person.profile.image_url.should == new_profile.image_url
   end
 end

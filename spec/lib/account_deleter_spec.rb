@@ -11,8 +11,8 @@ describe AccountDeleter do
   end
 
   it "attaches the user" do
-    expect(AccountDeleter.new(bob.person.diaspora_handle).user).to eq(bob)
-    expect(AccountDeleter.new(remote_raphael.diaspora_handle).user).to eq(nil)
+    AccountDeleter.new(bob.person.diaspora_handle).user.should == bob
+    AccountDeleter.new(remote_raphael.diaspora_handle).user.should == nil
   end
 
   describe '#perform' do
@@ -38,24 +38,9 @@ describe AccountDeleter do
       (user_removal_methods + person_removal_methods).each do |method|
 
         it "calls ##{method.to_s}" do
-          expect(@account_deletion).to receive(method)
+          @account_deletion.should_receive(method)
         end
       end
-    end
-
-    context "profile deletion" do
-      before do
-        @profile_deletion = AccountDeleter.new(remote_raphael.diaspora_handle)
-        @profile = remote_raphael.profile
-      end
-
-      it "nulls out fields in the profile" do
-        @profile_deletion.perform!
-        expect(@profile.reload.first_name).to be_blank
-        expect(@profile.last_name).to be_blank
-        expect(@profile.searchable).to be_falsey
-      end
-
     end
 
     context "person deletion" do
@@ -70,14 +55,14 @@ describe AccountDeleter do
       (user_removal_methods).each do |method|
 
         it "does not call ##{method.to_s}" do
-          expect(@person_deletion).not_to receive(method)
+          @person_deletion.should_not_receive(method)
         end
       end
 
       (person_removal_methods).each do |method|
 
         it "calls ##{method.to_s}" do
-          expect(@person_deletion).to receive(method)
+          @person_deletion.should_receive(method)
         end
       end
     end
@@ -88,8 +73,8 @@ describe AccountDeleter do
     it 'removes all standard user associaltions' do
       @account_deletion.normal_ar_user_associates_to_delete.each do |asso|
         association_double = double
-        expect(association_double).to receive(:destroy)
-        expect(bob).to receive(asso).and_return([association_double])
+        association_double.should_receive(:destroy)
+        bob.should_receive(asso).and_return([association_double])
       end
 
       @account_deletion.delete_standard_user_associations
@@ -103,8 +88,8 @@ describe AccountDeleter do
     it 'removes all standard person associaltions' do
       @account_deletion.normal_ar_person_associates_to_delete.each do |asso|
         association_double = double
-        expect(association_double).to receive(:destroy_all)
-        expect(bob.person).to receive(asso).and_return(association_double)
+        association_double.should_receive(:destroy_all)
+        bob.person.should_receive(asso).and_return(association_double)
       end
 
       @account_deletion.delete_standard_person_associations
@@ -114,8 +99,8 @@ describe AccountDeleter do
   describe "#disassociate_invitations" do
     it "sets invitations_from_me to be admin invitations" do
       invites = [double]
-      allow(bob).to receive(:invitations_from_me).and_return(invites)
-      expect(invites.first).to receive(:convert_to_admin!)
+      bob.stub(:invitations_from_me).and_return(invites)
+      invites.first.should_receive(:convert_to_admin!)
       @account_deletion.disassociate_invitations
     end
   end
@@ -123,7 +108,7 @@ describe AccountDeleter do
   context 'person associations' do
     describe '#disconnect_contacts' do
       it "deletes all of user's contacts" do
-        expect(bob.contacts).to receive(:destroy_all)
+        bob.contacts.should_receive(:destroy_all)
         @account_deletion.disconnect_contacts
       end
     end
@@ -131,28 +116,28 @@ describe AccountDeleter do
     describe '#delete_contacts_of_me' do
       it 'deletes all the local contact objects where deleted account is the person' do
         contacts = double
-        expect(Contact).to receive(:all_contacts_of_person).with(bob.person).and_return(contacts)
-        expect(contacts).to receive(:destroy_all)
+        Contact.should_receive(:all_contacts_of_person).with(bob.person).and_return(contacts)
+        contacts.should_receive(:destroy_all)
         @account_deletion.delete_contacts_of_me
       end
     end
 
     describe '#tombstone_person_and_profile' do
       it 'calls clear_profile! on person' do
-        expect(@account_deletion.person).to receive(:clear_profile!)
+        @account_deletion.person.should_receive(:clear_profile!)
         @account_deletion.tombstone_person_and_profile
       end
 
       it 'calls lock_access! on person' do
-        expect(@account_deletion.person).to receive(:lock_access!)
+        @account_deletion.person.should_receive(:lock_access!)
         @account_deletion.tombstone_person_and_profile
       end
     end
      describe "#remove_conversation_visibilities" do
       it "removes the conversation visibility for the deleted user" do
         vis = double
-        expect(ConversationVisibility).to receive(:where).with(hash_including(:person_id => bob.person.id)).and_return(vis)
-        expect(vis).to receive(:destroy_all)
+        ConversationVisibility.should_receive(:where).with(hash_including(:person_id => bob.person.id)).and_return(vis)
+        vis.should_receive(:destroy_all)
         @account_deletion.remove_conversation_visibilities
       end
     end
@@ -161,8 +146,8 @@ describe AccountDeleter do
   describe "#remove_person_share_visibilities" do
     it 'removes the share visibilities for a person ' do
       @s_vis = double
-      expect(ShareVisibility).to receive(:for_contacts_of_a_person).with(bob.person).and_return(@s_vis)
-      expect(@s_vis).to receive(:destroy_all)
+      ShareVisibility.should_receive(:for_contacts_of_a_person).with(bob.person).and_return(@s_vis)
+      @s_vis.should_receive(:destroy_all)
 
       @account_deletion.remove_share_visibilities_on_persons_posts
     end
@@ -171,8 +156,8 @@ describe AccountDeleter do
   describe "#remove_share_visibilities_by_contacts_of_user" do
     it 'removes the share visibilities for a user' do
       @s_vis = double
-      expect(ShareVisibility).to receive(:for_a_users_contacts).with(bob).and_return(@s_vis)
-      expect(@s_vis).to receive(:destroy_all)
+      ShareVisibility.should_receive(:for_a_users_contacts).with(bob).and_return(@s_vis)
+      @s_vis.should_receive(:destroy_all)
 
       @account_deletion.remove_share_visibilities_on_contacts_posts
     end
@@ -180,19 +165,19 @@ describe AccountDeleter do
 
   describe "#tombstone_user" do
     it 'calls strip_model on user' do
-      expect(bob).to receive(:clear_account!)
+      bob.should_receive(:clear_account!)
       @account_deletion.tombstone_user
     end
   end
 
   it 'has all user association keys accounted for' do
     all_keys = (@account_deletion.normal_ar_user_associates_to_delete + @account_deletion.special_ar_user_associations + @account_deletion.ignored_ar_user_associations)
-    expect(all_keys.sort{|x, y| x.to_s <=> y.to_s}).to eq(User.reflections.keys.sort{|x, y| x.to_s <=> y.to_s})
+    all_keys.sort{|x, y| x.to_s <=> y.to_s}.should == User.reflections.keys.sort{|x, y| x.to_s <=> y.to_s}
   end
 
   it 'has all person association keys accounted for' do
     all_keys = (@account_deletion.normal_ar_person_associates_to_delete + @account_deletion.ignored_or_special_ar_person_associations)
-    expect(all_keys.sort{|x, y| x.to_s <=> y.to_s}).to eq(Person.reflections.keys.sort{|x, y| x.to_s <=> y.to_s})
+    all_keys.sort{|x, y| x.to_s <=> y.to_s}.should == Person.reflections.keys.sort{|x, y| x.to_s <=> y.to_s}
   end
 end
 

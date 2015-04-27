@@ -11,7 +11,7 @@ describe Stream::Person do
   end
 
   it "returns the most recent posts" do
-    skip # this randomly fails on postgres
+    pending # this randomly fails on postgres
     posts = []
     fetched_posts = []
     
@@ -28,7 +28,7 @@ describe Stream::Person do
     posts = posts.reverse.slice(0..14)
     fetched_posts = fetched_posts.slice(0..14)
 
-    expect(fetched_posts).to eq(posts)
+    fetched_posts.should == posts
   end
 
 end

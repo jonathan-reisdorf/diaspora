@@ -4,7 +4,7 @@
 
 require 'spec_helper'
 
-describe LikesController, :type => :controller do
+describe LikesController do
   before do
     @alices_aspect = alice.aspects.where(:name => "generic").first
     @bobs_aspect = bob.aspects.where(:name => "generic").first
@@ -33,7 +33,7 @@ describe LikesController, :type => :controller do
             @target = alice.post :status_message, :text => "AWESOME", :to => @alices_aspect.id
             @target = alice.comment!(@target, "hey") if class_const == Comment
             post :create, like_hash.merge(:format => :json)
-            expect(response.code).to eq('201')
+            response.code.should == '201'
           end
         end
 
@@ -45,18 +45,18 @@ describe LikesController, :type => :controller do
 
           it 'likes' do
             post :create, like_hash
-            expect(response.code).to eq('201')
+            response.code.should == '201'
           end
 
           it 'dislikes' do
             post :create, dislike_hash
-            expect(response.code).to eq('201')
+            response.code.should == '201'
           end
 
           it "doesn't post multiple times" do
             alice.like!(@target)
             post :create, dislike_hash
-            expect(response.code).to eq('422')
+            response.code.should == '422'
           end
         end
 
@@ -67,25 +67,9 @@ describe LikesController, :type => :controller do
           end
 
           it "doesn't post" do
-            expect(alice).not_to receive(:like!)
+            alice.should_not_receive(:like!)
             post :create, like_hash
-            expect(response.code).to eq('422')
-          end
-        end
-
-        context "when an the exception is raised" do
-          it "should be catched when it means that the target is not found" do
-            allow(@target).to receive(:id).and_return(-1)
-            post :create, like_hash.merge(:format => :json)
-            expect(response.code).to eq('422')
-          end
-
-          it "should not be catched when it is unexpected" do
-            @target = alice.post :status_message, :text => "AWESOME", :to => @alices_aspect.id
-            @target = alice.comment!(@target, "hey") if class_const == Comment
-            allow(alice).to receive(:like!).and_raise("something")
-            allow(@controller).to receive(:current_user).and_return(alice)
-            expect { post :create, like_hash.merge(:format => :json) }.to raise_error("something")
+            response.code.should == '422'
           end
         end
       end
@@ -110,12 +94,12 @@ describe LikesController, :type => :controller do
         it 'returns an array of likes for a post' do
           like = bob.like!(@message)
           get :index, id_field => @message.id
-          expect(assigns[:likes].map(&:id)).to eq(@message.likes.map(&:id))
+          assigns[:likes].map(&:id).should == @message.likes.map(&:id)
         end
 
         it 'returns an empty array for a post with no likes' do
           get :index, id_field => @message.id
-          expect(assigns[:likes]).to eq([])
+          assigns[:likes].should == []
         end
       end
 
@@ -128,10 +112,10 @@ describe LikesController, :type => :controller do
 
         it 'lets a user destroy their like' do
           current_user = controller.send(:current_user)
-          expect(current_user).to receive(:retract).with(@like)
+          current_user.should_receive(:retract).with(@like)
 
           delete :destroy, :format => :json, id_field => @like.target_id, :id => @like.id
-          expect(response.status).to eq(204)
+          response.status.should == 204
         end
 
         it 'does not let a user destroy other likes' do
@@ -142,7 +126,7 @@ describe LikesController, :type => :controller do
             delete :destroy, :format => :json, id_field => like2.target_id, :id => like2.id
           }.to raise_error(ActiveRecord::RecordNotFound)
 
-          expect(Like.count).to eq(like_count)
+          Like.count.should == like_count
 
         end
       end

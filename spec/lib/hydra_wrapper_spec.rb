@@ -17,9 +17,9 @@ describe HydraWrapper do
       dispatcher_class = "Postzord::Dispatcher::Private"
 
       wrapper = HydraWrapper.new user, @people, encoded_object_xml, dispatcher_class
-      expect(wrapper.user).to eq(user)
-      expect(wrapper.people).to eq(@people)
-      expect(wrapper.encoded_object_xml).to eq(encoded_object_xml)
+      wrapper.user.should == user
+      wrapper.people.should == @people
+      wrapper.encoded_object_xml.should == encoded_object_xml
     end
   end
 
@@ -27,16 +27,16 @@ describe HydraWrapper do
     it 'delegates #run to the @hydra' do
       hydra = double.as_null_object
       @wrapper.instance_variable_set :@hydra, hydra
-      expect(hydra).to receive :run
+      hydra.should_receive :run
       @wrapper.run
     end
   end
 
   describe '#xml_factory' do
     it 'calls the salmon method on the dispatcher class (and memoizes)' do
-      allow(Base64).to receive(:decode64).and_return "#{@wrapper.encoded_object_xml} encoded"
+      Base64.stub(:decode64).and_return "#{@wrapper.encoded_object_xml} encoded"
       decoded = Base64.decode64 @wrapper.encoded_object_xml
-      expect(@wrapper.dispatcher_class).to receive(:salmon).with(@wrapper.user, decoded).once.and_return true
+      @wrapper.dispatcher_class.should_receive(:salmon).with(@wrapper.user, decoded).once.and_return true
       @wrapper.send :xml_factory
       @wrapper.send :xml_factory
     end
@@ -44,32 +44,32 @@ describe HydraWrapper do
 
   describe '#grouped_people' do
     it 'groups people given their receive_urls' do
-      expect(@wrapper.dispatcher_class).to receive(:receive_url_for).and_return "foo.com", "bar.com", "bar.com"
+      @wrapper.dispatcher_class.should_receive(:receive_url_for).and_return "foo.com", "bar.com", "bar.com"
 
-      expect(@wrapper.send(:grouped_people)).to eq({"foo.com" => [@people[0]], "bar.com" => @people[1,2]})
+      @wrapper.send(:grouped_people).should == {"foo.com" => [@people[0]], "bar.com" => @people[1,2]}
     end
   end
 
   describe '#enqueue_batch' do
     it 'calls #grouped_people' do
-      expect(@wrapper).to receive(:grouped_people).and_return []
+      @wrapper.should_receive(:grouped_people).and_return []
       @wrapper.enqueue_batch
     end
 
     it 'inserts a job for every group of people' do
-      allow(Base64).to receive(:decode64)
+      Base64.stub(:decode64)
       @wrapper.dispatcher_class = double salmon: double(xml_for: "<XML>")
-      allow(@wrapper).to receive(:grouped_people).and_return('https://foo.com' => @wrapper.people)
-      expect(@wrapper.people).to receive(:first).once
-      expect(@wrapper).to receive(:insert_job).with('https://foo.com', "<XML>", @wrapper.people).once
+      @wrapper.stub(:grouped_people).and_return('https://foo.com' => @wrapper.people)
+      @wrapper.people.should_receive(:first).once
+      @wrapper.should_receive(:insert_job).with('https://foo.com', "<XML>", @wrapper.people).once
       @wrapper.enqueue_batch
     end
 
     it 'does not insert a job for a person whos xml returns false' do
-      allow(Base64).to receive(:decode64)
-      allow(@wrapper).to receive(:grouped_people).and_return('https://foo.com' => [double])
+      Base64.stub(:decode64)
+      @wrapper.stub(:grouped_people).and_return('https://foo.com' => [double])
       @wrapper.dispatcher_class = double salmon: double(xml_for: false)
-      expect(@wrapper).not_to receive :insert_job
+      @wrapper.should_not_receive :insert_job
       @wrapper.enqueue_batch
     end
 
@@ -78,7 +78,7 @@ describe HydraWrapper do
   describe '#redirecting_to_https?!' do
     it 'does not execute unless response has a 3xx code' do
       resp = double code: 200
-      expect(@wrapper.send(:redirecting_to_https?, resp)).to be false
+      @wrapper.send(:redirecting_to_https?, resp).should be_false
     end
 
     it "returns true if just the protocol is different" do
@@ -91,7 +91,7 @@ describe HydraWrapper do
         }
       )
 
-      expect(@wrapper.send(:redirecting_to_https?, resp)).to be true
+      @wrapper.send(:redirecting_to_https?, resp).should be_true
     end
 
     it "returns false if not just the protocol is different" do
@@ -104,7 +104,7 @@ describe HydraWrapper do
         }
       )
 
-      expect(@wrapper.send(:redirecting_to_https?, resp)).to be false
+      @wrapper.send(:redirecting_to_https?, resp).should be_false
     end
   end
 end

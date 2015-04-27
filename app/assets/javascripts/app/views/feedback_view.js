@@ -1,5 +1,3 @@
-// @license magnet:?xt=urn:btih:0b31508aeb0634b347b8270c7bee4d411b5d4109&dn=agpl-3.0.txt AGPL-v3-or-Later
-
 app.views.Feedback = app.views.Base.extend({
   templateName: "feedback",
 
@@ -8,10 +6,7 @@ app.views.Feedback = app.views.Base.extend({
   events: {
     "click .like" : "toggleLike",
     "click .reshare" : "resharePost",
-
-    "click .post_report" : "report",
-    "click .block_user" : "blockUser",
-    "click .hide_post" : "hidePost",
+    "click .post_report" : "report"
   },
 
   tooltipSelector : ".label",
@@ -43,46 +38,5 @@ app.views.Feedback = app.views.Base.extend({
     if(evt) { evt.preventDefault(); }
     if(!window.confirm(Diaspora.I18n.t("reshares.post", {name: this.model.reshareAuthor().name}))) { return }
     this.model.interactions.reshare();
-  },
-
-  blockUser: function(evt) {
-    if(evt) { evt.preventDefault(); }
-    if(!confirm(Diaspora.I18n.t('ignore_user'))) { return; }
-
-    this.model.blockAuthor()
-      .done(function() {
-        // return to stream
-        document.location.href = "/stream";
-      })
-      .fail(function() {
-        Diaspora.page.flashMessages.render({
-          success: false,
-          notice: Diaspora.I18n.t('hide_post_failed')
-        });
-      });
-  },
-
-  hidePost : function(evt) {
-    if(evt) { evt.preventDefault(); }
-    if(!confirm(Diaspora.I18n.t('hide_post'))) { return; }
-
-    $.ajax({
-      url : "/share_visibilities/42",
-      type : "PUT",
-      data : {
-        post_id : this.model.id
-      }
-    }).done(function() {
-        // return to stream
-        document.location.href = "/stream";
-      })
-      .fail(function() {
-        Diaspora.page.flashMessages.render({
-          success: false,
-          notice: Diaspora.I18n.t('ignore_post_failed')
-        });
-      });
-  },
+  }
 });
-// @license-end
-

@@ -18,19 +18,20 @@ describe("app.views.CommentStream", function(){
       spyOn($.fn, "placeholder")
       this.view.postRenderTemplate()
       expect($.fn.placeholder).toHaveBeenCalled()
-      expect($.fn.placeholder.calls.mostRecent().object.selector).toBe("textarea")
+      expect($.fn.placeholder.mostRecentCall.object.selector).toBe("textarea")
     });
 
     it("autoResizes the new comment textarea", function(){
       spyOn($.fn, "autoResize")
       this.view.postRenderTemplate()
       expect($.fn.autoResize).toHaveBeenCalled()
-      expect($.fn.autoResize.calls.mostRecent().object.selector).toBe("textarea")
+      expect($.fn.autoResize.mostRecentCall.object.selector).toBe("textarea")
     });
   });
 
   describe("createComment", function() {
     beforeEach(function() {
+      jasmine.Ajax.useMock();
       this.view.render();
       this.view.expandComments();
     });
@@ -40,7 +41,7 @@ describe("app.views.CommentStream", function(){
         this.view.$(".comment_box").val('a new comment');
         this.view.createComment();
 
-        this.request = jasmine.Ajax.requests.mostRecent();
+        this.request = mostRecentAjaxRequest();
       });
 
       it("fires an AJAX request", function() {
@@ -89,27 +90,28 @@ describe("app.views.CommentStream", function(){
 
   describe("expandComments", function() {
     it("refills the comment textbox on success", function() {
+      jasmine.Ajax.useMock();
+
       this.view.render();
+
       this.view.$("textarea").val("great post!");
+
       this.view.expandComments();
 
-      jasmine.Ajax.requests.mostRecent().response({ comments : [] });
+      mostRecentAjaxRequest().response({ 
+        status: 200,
+        responseText: JSON.stringify([factory.comment()])
+      });
 
       expect(this.view.$("textarea").val()).toEqual("great post!");
     });
   });
 
   describe("pressing a key when typing on the new comment box", function(){
-    var submitCallback;
-
-    beforeEach(function() {
-      submitCallback = jasmine.createSpy().and.returnValue(false);
-    });
-
     it("should not submit the form when enter key is pressed", function(){
       this.view.render();
       var form = this.view.$("form")
-      form.submit(submitCallback);
+      var submitCallback = jasmine.createSpy().andReturn(false);form.submit(submitCallback);
 
       var e = $.Event("keydown", { keyCode: 13 });
       e.shiftKey = false;
@@ -120,7 +122,8 @@ describe("app.views.CommentStream", function(){
 
     it("should submit the form when enter is pressed with ctrl", function(){
       this.view.render();
-      var form = this.view.$("form");
+      var form = this.view.$("form")
+      var submitCallback = jasmine.createSpy().andReturn(false);
       form.submit(submitCallback);
 
       var e = $.Event("keydown", { keyCode: 13 });

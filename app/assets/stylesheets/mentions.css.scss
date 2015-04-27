@@ -2,7 +2,7 @@
 @import '_mixins.css.scss';
 
 .mentions-input-box {
-  border-radius: 3px;
+  @include border-radius(3px);
 
   background: #fff;
   position: relative;
@@ -37,7 +37,7 @@
       margin: 0;
       padding: 0;
 
-      border-radius: 0px 0px 5px 5px;
+      @include border-radius(0px, 0px, 5px, 5px);
 
       li {
         color: #444;
@@ -54,7 +54,7 @@
         white-space: nowrap;
 
         &:hover, &.active { background: $background-grey; }
-        &:last-child { border-radius: 0px 0px 5px 5px; }
+        &:last-child { @include border-radius(0px, 0px, 5px, 5px); }
 
         img, div.icon {
           float: left;
@@ -66,22 +66,19 @@
     }
   }
 
-  .mentions-box {
-    position: absolute;
-    right: 0px;
-    bottom: 0px;
-    left: 0px;
-    top: 0px;
-    padding: 4px 6px;
-  }
-
   .mentions {
+    bottom: 0;
     color: white;
     font-size: 14px;
     font-family: Arial, Helvetica, sans-serif;
+    left: 0;
     line-height: normal;
     overflow: hidden;
-    width: 100%;
+    padding: 4px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 445px;
     white-space: pre-wrap;
     word-wrap: break-word;
 
