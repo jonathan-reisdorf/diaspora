@@ -31,10 +31,9 @@ module LayoutHelper
   end
 
   def current_user_atom_tag
-    return #temp hax
-
     return unless @person.present?
-    content_tag(:link, '', :rel => 'alternate', :href => "#{@person.public_url}.atom", :type => "application/atom+xml", :title => t('.public_feed', :name => @person.name))
+    content_tag(:link, "", rel: "alternate", href: @person.atom_url, type: "application/atom+xml",
+                title: t(".public_feed", name: @person.name))
   end
 
   def translation_missing_warnings

@@ -3,19 +3,25 @@ module Configuration
 
   module Methods
     def pod_uri
-      return @pod_uri unless @pod_uri.nil?
+      return @pod_uri.dup unless @pod_uri.nil?
 
       url = environment.url.get
       url = "http://#{url}" unless url =~ /^(https?:\/\/)/
       url << "/" unless url.end_with?("/")
 
       begin
-        @pod_url = Addressable::URI.parse(url)
+        @pod_uri = Addressable::URI.parse(url)
       rescue
         puts "WARNING: pod url #{url} is not a legal URI"
       end
 
-      @pod_url
+      @pod_uri.dup
+    end
+
+    # @param path [String]
+    # @return [String]
+    def url_to(path)
+      pod_uri.tap {|uri| uri.path = path }.to_s
     end
 
     def bare_pod_uri
@@ -33,6 +39,13 @@ module Configuration
       @configured_services
     end
     attr_writer :configured_services
+
+    def show_service?(service, user)
+      return false unless self["services.#{service}.enable"]
+      # Return true only if 'authorized' is true or equal to user username
+      (user && self["services.#{service}.authorized"] == user.username) ||
+        self["services.#{service}.authorized"] == true
+    end
 
     def secret_token
       if heroku?
@@ -114,7 +127,7 @@ module Configuration
 
     def sidekiq_log
       path = Pathname.new environment.sidekiq.log.get
-      path = Rails.root.join(path) unless pathname.absolute?
+      path = Rails.root.join(path) unless path.absolute?
       path.to_s
     end
 
