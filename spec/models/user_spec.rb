@@ -725,6 +725,12 @@ describe User, :type => :model do
         user.save!
         expect(user.unconfirmed_email).to eql("alice@newmail.com")
       end
+
+      it "downcases the unconfirmed email" do
+        user.unconfirmed_email = "AlIce@nEwmaiL.Com"
+        user.save!
+        expect(user.unconfirmed_email).to eql("alice@newmail.com")
+      end
     end
 
     describe "#confirm_email_token" do
@@ -759,16 +765,16 @@ describe User, :type => :model do
       end
     end
 
-    describe '#mail_confirm_email' do
-      it 'enqueues a mail job on user with unconfirmed email' do
+    describe "#send_confirm_email" do
+      it "enqueues a mail job on user with unconfirmed email" do
         user.update_attribute(:unconfirmed_email, "alice@newmail.com")
         expect(Workers::Mail::ConfirmEmail).to receive(:perform_async).with(alice.id).once
-        expect(alice.mail_confirm_email).to eql(true)
+        alice.send_confirm_email
       end
 
-      it 'enqueues NO mail job on user without unconfirmed email' do
+      it "enqueues NO mail job on user without unconfirmed email" do
         expect(Workers::Mail::ConfirmEmail).not_to receive(:perform_async).with(alice.id)
-        expect(alice.mail_confirm_email).to eql(false)
+        alice.send_confirm_email
       end
     end
 
@@ -921,6 +927,54 @@ describe User, :type => :model do
     end
   end
 
+  describe "#send_welcome_message" do
+    let(:user) { FactoryGirl.create(:user) }
+    let(:podmin) { FactoryGirl.create(:user) }
+
+    context "with welcome message enabled" do
+      before do
+        AppConfig.settings.welcome_message.enabled = true
+      end
+
+      it "should send welcome message from podmin account" do
+        AppConfig.admins.account = podmin.username
+        expect {
+          user.send_welcome_message
+        }.to change(user.conversations, :count).by(1)
+        expect(user.conversations.first.author.owner.username).to eq podmin.username
+      end
+
+      it "should send welcome message text from config" do
+        AppConfig.admins.account = podmin.username
+        AppConfig.settings.welcome_message.text = "Hello %{username}, welcome!"
+        user.send_welcome_message
+        expect(user.conversations.first.messages.first.text).to eq "Hello #{user.username}, welcome!"
+      end
+
+      it "should use subject from config" do
+        AppConfig.settings.welcome_message.subject = "Welcome Message"
+        AppConfig.admins.account = podmin.username
+        user.send_welcome_message
+        expect(user.conversations.first.subject).to eq "Welcome Message"
+      end
+
+      it "should send no welcome message if no podmin is specified" do
+        AppConfig.admins.account = ""
+        user.send_welcome_message
+        expect(user.conversations.count).to eq 0
+      end
+    end
+
+    context "with welcome message disabled" do
+      it "shouldn't send a welcome message" do
+        AppConfig.settings.welcome_message.enabled = false
+        AppConfig.admins.account = podmin.username
+        user.send_welcome_message
+        expect(user.conversations.count).to eq 0
+      end
+    end
+  end
+
   context "close account" do
     before do
       @user = bob
@@ -1059,14 +1113,14 @@ describe User, :type => :model do
       expect(@user.exported_photos_at).to be_present
       expect(@user.exporting_photos).to be_falsey
       expect(@user.exported_photos_file.filename).to match /.zip/
-      expect(Zip::ZipFile.open(@user.exported_photos_file.path).entries.count).to eq(1)
+      expect(Zip::File.open(@user.exported_photos_file.path).entries.count).to eq(1)
     end
 
     it "does not add empty entries when photo not found" do
       File.unlink @user.photos.first.unprocessed_image.path
       @user.perform_export_photos!
       expect(@user.exported_photos_file.filename).to match /.zip/
-      expect(Zip::ZipFile.open(@user.exported_photos_file.path).entries.count).to eq(0)
+      expect(Zip::File.open(@user.exported_photos_file.path).entries.count).to eq(0)
     end
   end
 
