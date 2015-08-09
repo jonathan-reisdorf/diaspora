@@ -138,10 +138,37 @@ configuration: ## Section
     ## You probably don't want to uncomment or change this.
     #pubsub_server: 'https://pubsubhubbub.appspot.com/'
 
+    ## Logger configuration
+    logging: ## Section
+
+      logrotate: ## Section
+
+        ## Roll the application log on a daily basis (default=true).
+        #enable: true
+
+        ## The number of days to keep (default=7)
+        #days: 7
+
+      ## Debug logging
+      debug: ## Section
+
+        ## Enables the debug-logging for SQL (default=false)
+        ## This logs every SQL-statement!
+        #sql: true
+
+        ## Enables the federation-debug-log (default=false)
+        ## This logs all XMLs that are used for the federation
+        #federation: true
+
   ## Settings affecting how ./script/server behaves.
   server: ## Section
+    ## Where the appserver should listen to (default=0.0.0.0:3000)
+    #listen: '127.0.0.1:3000'
+    #listen: 'unix:tmp/diaspora.sock'
+    #listen: 'unix:/run/diaspora/diaspora.sock'
 
-    ## The port on which the appserver should listen (default=3000).
+    ## The port on which the appserver should listen (default=none).
+    ## Note: this setting is deprecated, use listen instead.
     #port: 3000
 
     ## Rails environment (default='development').
@@ -387,6 +414,26 @@ configuration: ## Section
     ## please consider resharing diaspora* HQ's posts for your pod's users!
     #autofollow_on_join_user: 'diasporahq@joindiaspora.com'
 
+    ## Welcome Message settings
+    welcome_message: ##Section
+
+      ## Welcome Message on registration (default=false)
+      ## Send a message to new users after registration
+      ## to tell them about your pod and how things
+      ## are handled on it.
+      #enabled: false
+
+      ## Welcome Message subject (default='Welcome Message')
+      ## The subject of the conversation that is started
+      ## by your welcome message.
+      #subject: "Welcome Message"
+
+      ## Welcome Message text (default='Hello %{username}, welcome to diaspora.')
+      ## The content of your welcome message.
+      ## The placeholder "%{username}" will be replaced by the username
+      ## of the new user.
+      #text: "Hello %{username}, welcome to diaspora."
+
     ## Invitation settings
     invitations: ## Section
 
@@ -407,14 +454,14 @@ configuration: ## Section
     ## **or** an encrypted key for an unhosted button.
     paypal_donations: ## Section
       #enable: false
-    
+
       ## Currency used (USD, EUR...)
       #currency: USD
-    
+
       ## hosted Paypal button id
       #paypal_hosted_button_id: "change_me"
       ## OR encrypted key of unhosted button
-      #paypal_unhosted_button_encrypted: "-----BEGIN PKCS7-----" 
+      #paypal_unhosted_button_encrypted: "-----BEGIN PKCS7-----"
 
     ## Bitcoin donations
     ## You can provide a bitcoin address here to allow your users to provide
@@ -530,6 +577,13 @@ configuration: ## Section
       #enable: true
       #app_id: 'abcdef'
       #secret: 'change_me'
+
+      ## This setting is required to define whether the Facebook app has permissions to post
+      ##   false == No permissions (default)
+      ##   true == Permissions for all users to post. App MUST have 'publish_actions' approved by Facebook!
+      ##   "username" == Set to local username to allow a single user to cross-post. The person who has created
+      ##                 the Facebook app will always be able to cross-post, even without 'publish_actions'.
+      #authorized: false
 
     ## OAuth credentials for Twitter
     twitter: ## Section

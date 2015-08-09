@@ -41,7 +41,7 @@ class User < ActiveRecord::Base
   has_one :profile, through: :person
 
   delegate :guid, :public_key, :posts, :photos, :owns?, :image_url,
-           :diaspora_handle, :name, :public_url, :profile, :url,
+           :diaspora_handle, :name, :atom_url, :profile_url, :profile, :url,
            :first_name, :last_name, :gender, :participations, to: :person
   delegate :id, :guid, to: :person, prefix: true
 
@@ -67,8 +67,8 @@ class User < ActiveRecord::Base
   has_many :blocks
   has_many :ignored_people, :through => :blocks, :source => :person
 
-  has_many :conversation_visibilities, -> { order 'updated_at DESC' }, through: :person
-  has_many :conversations, -> { order 'updated_at DESC' }, through: :conversation_visibilities
+  has_many :conversation_visibilities, through: :person
+  has_many :conversations, through: :conversation_visibilities
 
   has_many :notifications, :foreign_key => :recipient_id
 
@@ -232,7 +232,7 @@ class User < ActiveRecord::Base
   end
 
   def dispatch_post(post, opts={})
-    FEDERATION_LOGGER.info("user:#{self.id} dispatching #{post.class}:#{post.guid}")
+    logger.info "user:#{id} dispatching #{post.class}:#{post.guid}"
     Postzord::Dispatcher.defer_build_and_post(self, post, opts)
   end
 
@@ -325,7 +325,7 @@ class User < ActiveRecord::Base
   def perform_export_photos!
     temp_zip = Tempfile.new([username, '_photos.zip'])
     begin
-      Zip::ZipOutputStream.open(temp_zip.path) do |zos|
+      Zip::OutputStream.open(temp_zip.path) do |zos|
         photos.each do |photo|
           begin
             photo_file = photo.unprocessed_image.file
@@ -361,10 +361,9 @@ class User < ActiveRecord::Base
     end
   end
 
-  def mail_confirm_email
-    return false if unconfirmed_email.blank?
+  def send_confirm_email
+    return if unconfirmed_email.blank?
     Workers::Mail::ConfirmEmail.perform_async(id)
-    true
   end
 
   ######### Posts and Such ###############
@@ -461,12 +460,29 @@ class User < ActiveRecord::Base
     aq
   end
 
+  def send_welcome_message
+    return unless AppConfig.settings.welcome_message.enabled? && AppConfig.admins.account?
+    sender_username = AppConfig.admins.account.get
+    sender = User.find_by(username: sender_username)
+    conversation = sender.build_conversation(
+      participant_ids: [sender.person.id, person.id],
+      subject:         AppConfig.settings.welcome_message.subject.get,
+      message:         {text: AppConfig.settings.welcome_message.text.get % {username: username}})
+    if conversation.save
+      Postzord::Dispatcher.build(sender, conversation).post
+    end
+  end
+
   def encryption_key
     OpenSSL::PKey::RSA.new(serialized_private_key)
   end
 
   def admin?
     Role.is_admin?(self.person)
+  end
+
+  def podmin_account?
+    username == AppConfig.admins.account
   end
 
   def mine?(target)
