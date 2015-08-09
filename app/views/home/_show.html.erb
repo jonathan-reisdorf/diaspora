@@ -1,0 +1,101 @@
+<style>
+    .berlinspora-home {
+        position:fixed;
+        left:0;
+        top:0;
+        width:100%;
+        height:100%;
+        right:0;
+        bottom:0;
+        background:#ccaec0 url('/assets/img/bg_berlinspora.jpg') right top no-repeat;
+        background-size:cover;
+        z-index:99999;
+        cursor:default;
+        user-select:none;
+        font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+    .berlinspora-home-panel {
+        position:relative;
+        padding:50px;
+        background:rgba(0, 0, 0, 0.5);
+        top:50%;
+        max-width:600px;
+        margin:0 auto;
+        color:#fff;
+        font-size:24px;
+        border-radius:3px;
+        transform:translateY(-50%);
+        overflow-y:auto;
+        font-weight:300;
+        text-align:center;
+    }
+
+    .berlinspora-home-headline {
+        margin:0;
+        padding:0;
+        font-size:1.5em;
+        font-weight:300;
+    }
+    .berlinspora-home-headline-sub {
+        margin:0;
+        padding:0;
+        font-size:24px;
+        font-weight:300;
+        color:#ccc;
+    }
+    .berlinspora-home-tiles {
+        margin-top:25px;
+        padding-top:25px;
+        border-top:1px solid rgba(255,255,255,0.3);
+    }
+    .berlinspora-home-tiles:after {
+        display:block;
+        content:'';
+        clear:both;
+    }
+    a.berlinspora-home-tile {
+        display:block;
+        text-decoration:none;
+        float:left;
+        width:50%;
+        overflow:hidden;
+        border-radius:5px;
+        color:#fff;
+        cursor:pointer;
+        padding:50px;
+        transition:all 0.3s;
+        box-sizing:border-box;
+        font-size:20px;
+        white-space:nowrap;
+        text-shadow:0 0 5px #000;
+    }
+    a.berlinspora-home-tile:hover {
+        background-color:rgba(0, 0, 0, 0.35);
+        box-shadow:inset 0 0 10px #000;
+        color:#fff;
+        text-decoration:none;
+    }
+    .berlinspora-home-sub {
+        display:block;
+        margin-top:10px;
+        color:#ccc;
+        font-size:16px;
+    }
+</style>
+<div class="berlinspora-home">
+    <div class="berlinspora-home-panel">
+        <h1 class="berlinspora-home-headline">Willkommen bei berlinspora</h1>
+        <h2 class="berlinspora-home-headline-sub"> // welcome to berlinspora</h2>
+
+        <div class="berlinspora-home-tiles">
+            <a href="/users/sign_in" class="berlinspora-home-tile">
+                einloggen
+                <span class="berlinspora-home-sub">// login</span>
+            </a>
+            <a href="/users/sign_up" class="berlinspora-home-tile">
+                registrieren
+                <span class="berlinspora-home-sub">// register</span>
+            </a>
+        </div>
+    </div>
+</div>
