@@ -3,11 +3,11 @@
 #   the COPYRIGHT file.
 
 require 'sidekiq/web'
-require "sidekiq/cron/web"
+require 'sidetiq/web'
 
 Diaspora::Application.routes.draw do
 
-  resources :report, except: %i(edit new show)
+  resources :report, :except => [:edit, :new]
 
   if Rails.env.production?
     mount RailsAdmin::Engine => '/admin_panel', :as => 'rails_admin'
@@ -18,18 +18,17 @@ Diaspora::Application.routes.draw do
     mount Sidekiq::Web => '/sidekiq', :as => 'sidekiq'
   end
 
-  # Federation
   mount DiasporaFederation::Engine => "/"
 
   get "/atom.xml" => redirect('http://blog.diasporafoundation.org/feed/atom') #too many stupid redirects :()
 
   get 'oembed' => 'posts#oembed', :as => 'oembed'
   # Posting and Reading
-  resources :reshares, only: %i(create)
+  resources :reshares
 
   resources :status_messages, :only => [:new, :create]
 
-  resources :posts, only: %i(show destroy) do
+  resources :posts do
     member do
       get :interactions
     end
@@ -38,10 +37,13 @@ Diaspora::Application.routes.draw do
     resources :poll_participations, only: :create
     resources :likes, only: %i(create destroy index)
     resources :comments, only: %i(new create destroy index)
-    resources :reshares, only: :index
+    resource :favorite, only: %i(create)
   end
 
+
+
   get 'p/:id' => 'posts#show', :as => 'short_post'
+  get 'posts/:id/iframe' => 'posts#iframe', :as => 'iframe'
 
   # roll up likes into a nested resource above
   resources :comments, :only => [:create, :destroy] do
@@ -49,6 +51,9 @@ Diaspora::Application.routes.draw do
   end
 
   # Streams
+  get "participate" => "streams#activity" # legacy
+  get "explore" => "streams#multi"        # legacy
+
   get "activity" => "streams#activity", :as => "activity_stream"
   get "stream" => "streams#multi", :as => "stream"
   get "public" => "streams#public", :as => "public_stream"
@@ -57,8 +62,9 @@ Diaspora::Application.routes.draw do
   get "liked" => "streams#liked", :as => "liked_stream"
   get "commented" => "streams#commented", :as => "commented_stream"
   get "aspects" => "streams#aspects", :as => "aspects_stream"
+  get "favors" => "streams#favors", :as => "favors_stream"
 
-  resources :aspects, except: %i(index new edit) do
+  resources :aspects do
     put :toggle_contact_visibility
     put :toggle_chat_privilege
     collection do
@@ -68,17 +74,16 @@ Diaspora::Application.routes.draw do
 
   get 'bookmarklet' => 'status_messages#bookmarklet'
 
-  resources :photos, only: %i(destroy create) do
+  resources :photos, :except => [:index, :show] do
     put :make_profile_photo
   end
 
 	#Search
 	get 'search' => "search#search"
 
-  resources :conversations, except: %i(edit update destroy)  do
-    resources :messages, only: %i(create)
+  resources :conversations do
+    resources :messages, :only => [:create, :show]
     delete 'visibility' => 'conversation_visibilities#destroy'
-    get "raw"
   end
 
   resources :notifications, :only => [:index, :update] do
@@ -98,53 +103,52 @@ Diaspora::Application.routes.draw do
 
   get 'tags/:name' => 'tags#show', :as => 'tag'
 
+  resources :apps, :only => [:show]
+
   # Users and people
 
-  resource :user, only: %i(edit destroy), shallow: true do
-    put :edit, action: :update
+  resource :user, :only => [:edit, :update, :destroy], :shallow => true do
+    get :getting_started_completed
     post :export_profile
     get :download_profile
     post :export_photos
     get :download_photos
-    post :auth_token
   end
 
   controller :users do
-    get "public/:username"          => :public,                  :as => :users_public
-    get "getting_started"           => :getting_started,         :as => :getting_started
-    get "confirm_email/:token"      => :confirm_email,           :as => :confirm_email
-    get "privacy"                   => :privacy_settings,        :as => :privacy_settings
-    put "privacy"                   => :update_privacy_settings, :as => :update_privacy_settings
-    get "getting_started_completed" => :getting_started_completed
+    get 'public/:username'          => :public,           :as => 'users_public'
+    get 'getting_started'           => :getting_started,  :as => 'getting_started'
+    get 'privacy'                   => :privacy_settings, :as => 'privacy_settings'
+    get 'getting_started_completed' => :getting_started_completed
+    get 'confirm_email/:token'      => :confirm_email,    :as => 'confirm_email'
   end
 
-  devise_for :users, controllers: {sessions: :sessions}, skip: :registration
-  devise_scope :user do
-    get "/users/sign_up" => "registrations#new",    :as => :new_user_registration
-    post "/users"        => "registrations#create", :as => :user_registration
-  end
+  # This is a hack to overide a route created by devise.
+  # I couldn't find anything in devise to skip that route, see Bug #961
+  get 'users/edit' => redirect('/user/edit')
 
-  get "users/invitations"  => "invitations#new",    :as => "new_user_invitation"
-  post "users/invitations" => "invitations#create", :as => "user_invitation"
+  devise_for :users, :controllers => {:registrations => "registrations",
+                                      :sessions      => "sessions"}
+
+  #legacy routes to support old invite routes
+  get 'users/invitation/accept' => 'invitations#edit'
+  get 'invitations/email' => 'invitations#email', :as => 'invite_email'
+  get 'users/invitations' => 'invitations#new', :as => 'new_user_invitation'
+  post 'users/invitations' => 'invitations#create', :as => 'user_invitation'
 
   get 'login' => redirect('/users/sign_in')
 
   # Admin backend routes
 
-  scope "admins", controller: :admins do
+  scope 'admins', :controller => :admins do
     match :user_search, via: [:get, :post]
-    get :admin_inviter
-    get :weekly_user_stats
-    get :stats, as: "pod_stats"
-    get :dashboard, as: "admin_dashboard"
-    get "add_invites/:invite_code_id" => "admins#add_invites", :as => "add_invites"
+    get   :admin_inviter
+    get   :weekly_user_stats
+    get   :stats, :as => 'pod_stats'
+    get   "add_invites/:invite_code_id" => 'admins#add_invites', :as => 'add_invites'
   end
 
   namespace :admin do
-    resources :pods, only: :index do
-      post :recheck
-    end
-
     post 'users/:id/close_account' => 'users#close_account', :as => 'close_account'
     post 'users/:id/lock_account' => 'users#lock_account', :as => 'lock_account'
     post 'users/:id/unlock_account' => 'users#unlock_account', :as => 'unlock_account'
@@ -154,7 +158,8 @@ Diaspora::Application.routes.draw do
   resources :profiles, :only => [:show]
 
 
-  resources :contacts, only: %i(index)
+  resources :contacts,           :except => [:update, :create] do
+  end
   resources :aspect_memberships, :only  => [:destroy, :create]
   resources :share_visibilities,  :only => [:update]
   resources :blocks, :only => [:create, :destroy]
@@ -162,18 +167,36 @@ Diaspora::Application.routes.draw do
   get 'i/:id' => 'invitation_codes#show', :as => 'invite_code'
 
   get 'people/refresh_search' => "people#refresh_search"
-  resources :people, only: %i(show index) do
-    resources :status_messages, only: %i(new create)
-    resources :photos, except:  %i(new update)
+  resources :people, :except => [:edit, :update] do
+    resources :status_messages
+    resources :photos
     get :contacts
+    get "aspect_membership_button" => :aspect_membership_dropdown, :as => "aspect_membership_button"
     get :stream
     get :hovercard
 
+    member do
+      get :last_post
+    end
+
     collection do
       post 'by_handle' => :retrieve_remote, :as => 'person_by_handle'
+      get :tag_index
     end
   end
   get '/u/:username' => 'people#show', :as => 'user_profile', :constraints => { :username => /[^\/]+/ }
+  get '/u/:username/profile_photo' => 'users#user_photo', :constraints => { :username => /[^\/]+/ }
+
+
+  # Federation
+
+  controller :publics do
+    post 'receive/users/:guid'  => :receive
+    post 'receive/public'       => :receive_public
+    get 'hub'                   => :hub
+  end
+
+
 
   # External
 
@@ -182,6 +205,20 @@ Diaspora::Application.routes.draw do
     scope "/auth", :as => "auth" do
       get ':provider/callback' => :create
       get :failure
+    end
+  end
+
+  scope 'api/v0', :controller => :apis do
+    get :me
+  end
+
+  namespace :api do
+    namespace :v0 do
+      get "/users/:username" => 'users#show', :as => 'user'
+      get "/tags/:name" => 'tags#show', :as => 'tag'
+    end
+    namespace :v1 do
+      resources :tokens, :only => [:create, :destroy]
     end
   end
 
@@ -204,34 +241,10 @@ Diaspora::Application.routes.draw do
   get "statistics",           to: "node_info#statistics"
 
   # Terms
-  if AppConfig.settings.terms.enable? || Rails.env.test?
+  if AppConfig.settings.terms.enable?
     get 'terms' => 'terms#index'
   end
 
-  # Relay
-  get ".well-known/x-social-relay" => "social_relay#well_known"
-
   # Startpage
   root :to => 'home#show'
-  get "podmin", to: "home#podmin"
-
-  namespace :api do
-    namespace :openid_connect do
-      resources :clients, only: :create
-      get "clients/find", to: "clients#find"
-
-      post "access_tokens", to: "token_endpoint#create"
-
-      # Authorization Servers MUST support the use of the HTTP GET and POST methods at the Authorization Endpoint
-      # See http://openid.net/specs/openid-connect-core-1_0.html#AuthResponseValidation
-      resources :authorizations, only: %i(new create destroy)
-      post "authorizations/new", to: "authorizations#new"
-      get "user_applications", to: "user_applications#index"
-      get "jwks.json", to: "id_tokens#jwks"
-      match "user_info", to: "user_info#show", via: %i(get post)
-    end
-  end
-
-  get ".well-known/webfinger", to: "api/openid_connect/discovery#webfinger"
-  get ".well-known/openid-configuration", to: "api/openid_connect/discovery#configuration"
 end

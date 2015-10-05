@@ -7,7 +7,35 @@
 
   <div class="bd">
     {{#if loggedIn}}
-      <div class="post-controls"></div>
+      <div class="control-icons">
+        <a href="#" rel="nofollow" class="favorite" title="{{t "favorite.name"}}">
+          <i class="entypo-add-to-list"></i>
+        </a>
+        {{#if authorIsCurrentUser}}
+          <a href="#" rel="nofollow" class="delete remove_post" title="{{t "delete"}}">
+            <i class="entypo trash"></i>
+          </a>
+        {{else}}
+          <a href="#" rel="nofollow" data-type="post" class="post_report" title="{{t "report.name"}}">
+            <i class="entypo warning"></i>
+          </a>
+          <a href="#" rel="nofollow" class="block_user" title="{{t "ignore"}}">
+            <i class="entypo block"></i>
+          </a>
+          {{#if participation}}
+            <a href="#" rel="nofollow" class="destroy_participation" title="{{t "stream.disable_post_notifications"}}">
+              <i class="entypo bell"></i>
+            </a>
+          {{else}}
+            <a href="#" rel="nofollow" class="create_participation" title="{{t "stream.enable_post_notifications"}}">
+              <i class="entypo bell"></i>
+            </a>
+          {{/if}}
+          <a href="#" rel="nofollow" class="delete hide_post" title="{{t "stream.hide"}}">
+            <i class="entypo cross"></i>
+          </a>
+        {{/if}}
+      </div>
     {{/if}}
 
     <div>
@@ -15,18 +43,15 @@
         {{name}}
       {{/linkToAuthor}}
 
-      <span class="details gray">
+      <span class="details grey">
         -
-        {{#if preview}}
+        <a href="/posts/{{id}}">
           <time class="timeago" data-original-title="{{{localTime created_at}}}" datetime="{{created_at}}" />
-        {{else}}
-          <a href="/posts/{{id}}">
-            <time class="timeago" data-original-title="{{{localTime created_at}}}" datetime="{{created_at}}" />
-          </a>
+        </a>
 
-          <a href="/posts/{{id}}" class="permalink" title="{{t "stream.permalink"}}">
-            <i class="entypo-link"></i>
-          </a>
+        {{#if interactions.reshares_count}}
+          -
+          {{t "stream.reshares" count=interactions.reshares_count}}
         {{/if}}
       </span>
     </div>
@@ -36,7 +61,6 @@
 
     <div class="feedback nsfw-hidden"> </div>
     <div class="likes nsfw-hidden"> </div>
-    <div class="reshares nsfw-hidden"> </div>
     <div class="comments nsfw-hidden"> </div>
   </div>
 </div>
