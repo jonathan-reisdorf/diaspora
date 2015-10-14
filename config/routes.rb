@@ -30,16 +30,14 @@ Diaspora::Application.routes.draw do
 
   resources :posts do
     member do
-      get :next
-      get :previous
       get :interactions
     end
 
-    resources :poll_participations, :only => [:create]
-
-    resources :likes, :only => [:create, :destroy, :index ]
-    resource :participation, :only => [:create, :destroy]
-    resources :comments, :only => [:new, :create, :destroy, :index]
+    resource :participation, only: %i(create destroy)
+    resources :poll_participations, only: :create
+    resources :likes, only: %i(create destroy index)
+    resources :comments, only: %i(new create destroy index)
+    resource :bookmarks, only: %i(create destroy)
   end
 
 
@@ -64,6 +62,7 @@ Diaspora::Application.routes.draw do
   get "liked" => "streams#liked", :as => "liked_stream"
   get "commented" => "streams#commented", :as => "commented_stream"
   get "aspects" => "streams#aspects", :as => "aspects_stream"
+  get "bookmarked" => "streams#bookmarked", :as => "bookmarked_stream"
 
   resources :aspects do
     put :toggle_contact_visibility
@@ -145,7 +144,6 @@ Diaspora::Application.routes.draw do
     match :user_search, via: [:get, :post]
     get   :admin_inviter
     get   :weekly_user_stats
-    get   :correlations
     get   :stats, :as => 'pod_stats'
     get   "add_invites/:invite_code_id" => 'admins#add_invites', :as => 'add_invites'
   end
@@ -228,6 +226,7 @@ Diaspora::Application.routes.draw do
   # Mobile site
 
   get 'mobile/toggle', :to => 'home#toggle_mobile', :as => 'toggle_mobile'
+  get "/m", to: "home#force_mobile", as: "force_mobile"
 
   # Help
   get 'help' => 'help#faq', :as => 'help'
@@ -236,8 +235,10 @@ Diaspora::Application.routes.draw do
   #Protocol Url
   get 'protocol' => redirect("http://wiki.diasporafoundation.org/Federation_Protocol_Overview")
 
-  #Statistics
-  get :statistics, controller: :statistics
+  # NodeInfo
+  get ".well-known/nodeinfo", to: "node_info#jrd"
+  get "nodeinfo/:version",    to: "node_info#document", as: "node_info", constraints: {version: /\d+\.\d+/}
+  get "statistics",           to: "node_info#statistics"
 
   # Terms
   if AppConfig.settings.terms.enable?

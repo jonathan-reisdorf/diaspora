@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150607143809) do
+ActiveRecord::Schema.define(version: 20151006083356) do
 
   create_table "account_deletions", force: :cascade do |t|
     t.string   "diaspora_handle", limit: 255
@@ -59,6 +59,13 @@ ActiveRecord::Schema.define(version: 20150607143809) do
     t.integer "user_id",   limit: 4
     t.integer "person_id", limit: 4
   end
+
+  create_table "bookmarks", force: :cascade do |t|
+    t.integer "user_id", limit: 4, null: false
+    t.integer "post_id", limit: 4, null: false
+  end
+
+  add_index "bookmarks", ["user_id", "post_id"], name: "index_bookmarks_on_user_id_and_post_id", unique: true, using: :btree
 
   create_table "chat_contacts", force: :cascade do |t|
     t.integer "user_id",      limit: 4,   null: false
@@ -374,7 +381,6 @@ ActiveRecord::Schema.define(version: 20150607143809) do
     t.integer  "reshares_count",        limit: 4,     default: 0
     t.datetime "interacted_at"
     t.string   "frame_name",            limit: 255
-    t.boolean  "favorite",                            default: false
     t.string   "facebook_id",           limit: 255
     t.string   "tweet_id",              limit: 255
     t.integer  "open_graph_cache_id",   limit: 4
@@ -408,6 +414,7 @@ ActiveRecord::Schema.define(version: 20150607143809) do
     t.string   "location",         limit: 255
     t.string   "full_name",        limit: 70
     t.boolean  "nsfw",                           default: false
+    t.boolean  "public_details",                 default: false
   end
 
   add_index "profiles", ["full_name", "searchable"], name: "index_profiles_on_full_name_and_searchable", using: :btree

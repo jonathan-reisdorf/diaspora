@@ -22,6 +22,7 @@ app.views.StreamPost = app.views.Post.extend({
 
     "click .remove_post": "destroyModel",
     "click .hide_post": "hidePost",
+    "click .bookmark": "bookmark",
     "click .post_report": "report",
     "click .block_user": "blockUser",
 
@@ -91,6 +92,7 @@ app.views.StreamPost = app.views.Post.extend({
 
   remove : function() {
     $(this.el).slideUp(400, _.bind(function(){this.$el.remove()}, this));
+    app.stream.remove(this.model);
     return this;
   },
 

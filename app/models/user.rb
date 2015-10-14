@@ -73,6 +73,7 @@ class User < ActiveRecord::Base
   has_many :notifications, :foreign_key => :recipient_id
 
   has_many :reports
+  has_many :bookmarks
 
   before_save :guard_unconfirmed_email,
               :save_person!
@@ -454,7 +455,7 @@ class User < ActiveRecord::Base
     aq = self.aspects.create(:name => I18n.t('aspects.seed.acquaintances'))
 
     if AppConfig.settings.autofollow_on_join?
-      default_account = Webfinger.new(AppConfig.settings.autofollow_on_join_user).fetch
+      default_account = Person.find_or_fetch_by_identifier(AppConfig.settings.autofollow_on_join_user)
       self.share_with(default_account, aq) if default_account
     end
     aq

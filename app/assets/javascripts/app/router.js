@@ -23,6 +23,7 @@ app.Router = Backbone.Router.extend({
     "aspects/stream": "aspects_stream",
     "commented": "stream",
     "liked": "stream",
+    "bookmarked": "stream",
     "mentions": "stream",
     "followed_tags": "followed_tags",
     "tags/:name": "followed_tags",
@@ -126,7 +127,7 @@ app.Router = Backbone.Router.extend({
             {tagText: decodeURIComponent(name).toLowerCase()}
           );
       $("#author_info").prepend(followedTagsAction.render().el);
-      app.tags = new app.views.Tags({tagName: name});
+      app.tags = new app.views.Tags({hashtagName: name});
     }
     this._hideInactiveStreamLists();
   },
