@@ -11,9 +11,17 @@ class PostsController < ApplicationController
   respond_to :html, :mobile, :json, :xml
 
   rescue_from Diaspora::NonPublic do
-    respond_to do |format|
-      format.all { render template: "errors/not_public", status: 404, layout: "application" }
+    if user_signed_in?
+      respond_to do |format|
+        format.all { render template: "errors/not_public", status: 404, layout: "application" }
+      end
+    else
+      authenticate_user!
     end
+  end
+
+  rescue_from Diaspora::NotMine do
+    render text: "You are not allowed to do that", status: 403
   end
 
   def show

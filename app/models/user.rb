@@ -417,6 +417,10 @@ class User < ActiveRecord::Base
     Postzord::Dispatcher.build(self, profile).post
   end
 
+  def basic_profile_present?
+    tag_followings.any? || profile[:image_url]
+  end
+
   ###Helpers############
   def self.build(opts = {})
     u = User.new(opts.except(:person, :id))
@@ -480,6 +484,10 @@ class User < ActiveRecord::Base
 
   def admin?
     Role.is_admin?(self.person)
+  end
+
+  def moderator?
+    Role.moderator?(person)
   end
 
   def podmin_account?
