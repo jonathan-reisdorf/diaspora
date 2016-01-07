@@ -58,6 +58,8 @@ da:
       remove_contact: "Fjern kontakt"
       search_no_results: "Ingen kontakter fundet"
     conversation:
+      new:
+        no_contacts: "Du skal tilføje en eller flere kontakter før du kan starte en samtale."
       participants: "Deltagere"
     create: "Opret"
     delete: "Slet"
@@ -80,6 +82,7 @@ da:
       home: "Hjem"
       log_out: "Log ud"
       mark_all_as_read: "Marker alle som læst"
+      moderator: "Moderator"
       notifications: "Meddelelser"
       profile: "Profil"
       recent_notifications: "Seneste notifikationer"

@@ -55,6 +55,8 @@ fr:
       remove_contact: "Retirer ce contact"
       search_no_results: "Aucun contact trouvé"
     conversation:
+      new:
+        no_contacts: "Vous devez ajouter des contacts avant de pouvoir démarrer une conversation."
       participants: "Participants"
     create: "Créer"
     delete: "Effacer"
@@ -77,6 +79,7 @@ fr:
       home: "Accueil"
       log_out: "Se déconnecter"
       mark_all_as_read: "Tout marquer comme lu"
+      moderator: "Modérateur"
       notifications: "Notifications"
       profile: "Profil"
       recent_notifications: "Notifications récentes"

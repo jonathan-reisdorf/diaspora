@@ -55,6 +55,8 @@ es:
       remove_contact: "Eliminar contacto"
       search_no_results: "No se encontraron contactos"
     conversation:
+      new:
+        no_contacts: "Necesitas añadir algún contacto antes de empezar una conversación."
       participants: "Participantes"
     create: "Crear"
     delete: "Eliminar"
@@ -77,6 +79,7 @@ es:
       home: "Inicio"
       log_out: "Salir"
       mark_all_as_read: "Marcar todo como leído"
+      moderator: "Moderador"
       notifications: "Notificaciones"
       profile: "Perfil"
       recent_notifications: "Notificaciones recientes"

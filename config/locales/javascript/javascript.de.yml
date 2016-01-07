@@ -58,6 +58,8 @@ de:
       remove_contact: "Kontakt entfernen"
       search_no_results: "Keine Kontakte gefunden"
     conversation:
+      new:
+        no_contacts: "Du musst einige Kontakte hinzufügen, bevor du eine Konversation anfangen kannst."
       participants: "Teilnehmer"
     create: "Erstellen"
     delete: "Löschen"
@@ -80,6 +82,7 @@ de:
       home: "Startseite"
       log_out: "Abmelden"
       mark_all_as_read: "Alle als gelesen markieren"
+      moderator: "Moderator"
       notifications: "Benachrichtigungen"
       profile: "Profil"
       recent_notifications: "Neuste Benachrichtigungen"

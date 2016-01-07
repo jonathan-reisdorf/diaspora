@@ -50,13 +50,20 @@ describe Reshare, :type => :model do
       receive_reshare
       expect(@root.resharers).to include(@reshare.author)
     end
-    it 'does not error if the root author has a contact for the resharer' do
+
+    it "does not error if the root author has a contact for the resharer" do
       bob.share_with @reshare.author, bob.aspects.first
       expect {
         Timeout.timeout(5) do
           receive_reshare #This doesn't ever terminate on my machine before it was fixed.
         end
       }.not_to raise_error
+    end
+
+    it "participates root author in the reshare" do
+      receive_reshare
+      participations = Participation.where(target_id: @reshare.id, author_id: @root.author_id)
+      expect(participations.count).to eq(1)
     end
   end
 
@@ -212,9 +219,7 @@ describe Reshare, :type => :model do
 
           @original_author.profile = @original_profile
 
-          wf_prof_double = double
-          expect(wf_prof_double).to receive(:fetch).and_return(@original_author)
-          expect(Webfinger).to receive(:new).and_return(wf_prof_double)
+          expect(Person).to receive(:find_or_fetch_by_identifier).and_return(@original_author)
 
           allow(@response).to receive(:body).and_return(@root_object.to_diaspora_xml)
 
@@ -287,10 +292,7 @@ describe Reshare, :type => :model do
             @xml = @reshare.to_xml.to_s
 
             different_person = FactoryGirl.build(:person)
-
-            wf_prof_double = double
-            expect(wf_prof_double).to receive(:fetch).and_return(different_person)
-            expect(Webfinger).to receive(:new).and_return(wf_prof_double)
+            expect(Person).to receive(:find_or_fetch_by_identifier).and_return(different_person)
 
             allow(different_person).to receive(:url).and_return(@original_author.url)
 

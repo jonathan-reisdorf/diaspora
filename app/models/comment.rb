@@ -54,7 +54,7 @@ class Comment < ActiveRecord::Base
   end
 
   def diaspora_handle= nh
-    self.author = Webfinger.new(nh).fetch
+    self.author = Person.find_or_fetch_by_identifier(nh)
   end
 
   def notification_type(user, person)
@@ -94,6 +94,7 @@ class Comment < ActiveRecord::Base
 
     def initialize(person, target, text)
       @text = text
+      @dispatcher_opts = {additional_subscribers: target.comments_authors.where.not(id: person.id)}
       super(person, target)
     end
 
