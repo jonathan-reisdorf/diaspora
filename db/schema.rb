@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151006083356) do
+ActiveRecord::Schema.define(version: 20160327103605) do
 
   create_table "account_deletions", force: :cascade do |t|
     t.string   "diaspora_handle", limit: 255
@@ -59,13 +59,6 @@ ActiveRecord::Schema.define(version: 20151006083356) do
     t.integer "user_id",   limit: 4
     t.integer "person_id", limit: 4
   end
-
-  create_table "bookmarks", force: :cascade do |t|
-    t.integer "user_id", limit: 4, null: false
-    t.integer "post_id", limit: 4, null: false
-  end
-
-  add_index "bookmarks", ["user_id", "post_id"], name: "index_bookmarks_on_user_id_and_post_id", unique: true, using: :btree
 
   create_table "chat_contacts", force: :cascade do |t|
     t.integer "user_id",      limit: 4,   null: false
@@ -269,6 +262,7 @@ ActiveRecord::Schema.define(version: 20151006083356) do
     t.datetime "updated_at",                            null: false
   end
 
+  add_index "participations", ["author_id"], name: "index_participations_on_author_id", using: :btree
   add_index "participations", ["guid"], name: "index_participations_on_guid", length: {"guid"=>191}, using: :btree
   add_index "participations", ["target_id", "target_type", "author_id"], name: "index_participations_on_target_id_and_target_type_and_author_id", using: :btree
 
@@ -414,7 +408,6 @@ ActiveRecord::Schema.define(version: 20151006083356) do
     t.string   "location",         limit: 255
     t.string   "full_name",        limit: 70
     t.boolean  "nsfw",                           default: false
-    t.boolean  "public_details",                 default: false
   end
 
   add_index "profiles", ["full_name", "searchable"], name: "index_profiles_on_full_name_and_searchable", using: :btree
