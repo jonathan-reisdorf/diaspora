@@ -49,10 +49,6 @@ class StreamsController < ApplicationController
     stream_responder(Stream::FollowedTag)
   end
 
-  def bookmarked
-    stream_responder(Stream::Bookmarked)
-  end
-
   private
 
   def stream_responder(stream_klass=nil)
