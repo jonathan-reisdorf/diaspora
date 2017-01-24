@@ -1,8 +1,12 @@
-#trademark sillyness
-#app/views/home/_show.*
-#app/views/terms/terms.*
-#app/assets/images/custom/
+# XMPP certificates, keys and user data
+config/certs/*.crt
+config/certs/*.key
+config/prosody.cfg.lua
 
+# Trademark sillyness
+app/views/home/_show.*
+app/views/terms/terms.*
+app/assets/images/custom/
 
 # Configuration files
 config/diaspora.yml
@@ -10,14 +14,16 @@ config/heroku.yml
 config/initializers/secret_token.rb
 config/redis.conf
 config/deploy_config.yml
+config/schedule.rb
 .bundle
 vendor/bundle/
 vendor/cache/
 config/database.yml
 .rvmrc_custom
 .rvmrc.local
+config/oidc_key.pem
 
-#Mailing list stuff
+# Mailing list stuff
 config/email_offset
 config/mailing_list.csv
 
@@ -29,11 +35,17 @@ spec/fixtures/*.y*ml
 spec/fixtures/*.fixture.*
 coverage/
 xml_locales/
-app/assets/images/branding-*.png
-app/assets/images/icons-*.png
-app/assets/images/social_media_logos-*.png
+public/404.html
+public/422.html
+public/500.html
 
-#Documentation
+# Sprites
+app/assets/images/branding-*.png
+app/assets/images/branding/logos-*.png
+app/assets/images/icons-*.png
+app/assets/images/social-media-logos-*.png
+
+# Documentation
 .yardoc/
 doc/
 
@@ -58,14 +70,22 @@ tmp/
 *.swp
 *~
 *#
-bin/*
+*.bak
+*.save
+*.autosave
 nbproject
 patches-*
 capybara-*.html
 dump.rdb
 
-#Rubinius's JIT
+# Rubinius's JIT
 *.rbc
 
-#IDE
+# IDE
 diaspora.iml
+
+# Dolphin's directory's preferences files
+*.directory
+
+# WebTranslateIt
+.wti
