@@ -7,7 +7,7 @@ describe("Diaspora.Mobile.Comments", function(){
 
   describe("initialize", function() {
     it("calls submitComment when the comment form has been submitted", function() {
-      spyOn(Diaspora.Mobile.Comments, "submitComment");
+      spyOn(Diaspora.Mobile.Comments, "submitComment").and.returnValue(false);
       Diaspora.Mobile.Comments.initialize();
       Diaspora.Mobile.Comments.showCommentBox($(".stream .comment-action").first());
       $(".stream .new_comment").first().submit();
@@ -144,11 +144,23 @@ describe("Diaspora.Mobile.Comments", function(){
       expect(this.toggleReactionsLink.text().trim()).toBe("6 comments");
     });
 
-    it("Creates the reaction link when no reactions", function(){
+    it("Creates the reaction link when there are no reactions", function() {
       var parent = this.toggleReactionsLink.parent();
       var postGuid = this.bottomBar.parents(".stream-element").data("guid");
       this.toggleReactionsLink.remove();
       parent.prepend($("<span/>", {"class": "show-comments"}).text("0 comments"));
+
+      Diaspora.Mobile.Comments.increaseReactionCount(this.bottomBar);
+      this.toggleReactionsLink = this.bottomBar.find(".show-comments").first();
+      expect(this.toggleReactionsLink.text().trim()).toBe("1 comment");
+      expect(this.toggleReactionsLink.attr("href")).toBe("/posts/" + postGuid + "/comments.mobile");
+    });
+
+    it("Creates the reaction link when there are no reactions (french locale)", function() {
+      var parent = this.toggleReactionsLink.parent();
+      var postGuid = this.bottomBar.parents(".stream-element").data("guid");
+      this.toggleReactionsLink.remove();
+      parent.prepend($("<span/>", {"class": "show-comments"}).text("Aucun commentaire"));
 
       Diaspora.Mobile.Comments.increaseReactionCount(this.bottomBar);
       this.toggleReactionsLink = this.bottomBar.find(".show-comments").first();
