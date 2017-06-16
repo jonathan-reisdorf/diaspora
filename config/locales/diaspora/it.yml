@@ -126,6 +126,7 @@ it:
       updating: "Aggiornamento in corso"
     index:
       donate: "Fai una donazione"
+      donate_liberapay: "Dona a liberapay"
       help:
         any_problem: "Qualche problema?"
         contact_podmin: "Contatta l'amministratore del tuo pod!"
@@ -709,7 +710,6 @@ it:
       posting: "Invio in corso..."
       remove_location: "Rimuovi posizione"
       share: "Condividi"
-      upload_photos: "Carica foto"
       whats_on_your_mind: "A cosa stai pensando?"
     stream_element:
       via: "via %{link}"
@@ -721,8 +721,6 @@ it:
       user: "L'immagine segreta e il codice non coincidono"
     placeholder: "Inserisci il valore dell'immagine"
   status_messages:
-    create:
-      success: "Menzionati con successo: %{names}"
     new:
       mentioning: "Stai menzionando: %{person}"
     too_long: "Per favore, commenta con meno di %{count} carattere. Al momento sono %{current_length} caratteri"

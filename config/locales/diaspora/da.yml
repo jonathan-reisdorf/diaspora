@@ -70,9 +70,9 @@ da:
         one: "%{count} kommentar"
         other: "%{count} kommentarer"
         zero: "%{count} kommentarer"
-      current_segment: "Det nuværende segment ligger omkring <b>%{post_yest}</b> indlæg pr. bruger, fra <b>%{post_day}</b>"
+      current_segment: "Det nuværende segment ligger omkring %{post_yest} indlæg pr. bruger, fra %{post_day}"
       daily: "Daglig"
-      display_results: "Viser resultater fra <b>%{segment}</b>-segmentet"
+      display_results: "Viser resultater fra %{segment}-segmentet"
       go: "Udfør"
       month: "Måned"
       posts:
@@ -83,7 +83,7 @@ da:
         one: "%{count} deling"
         other: "%{count} delinger"
         zero: "%{count} delinger"
-      tag_name: "Tag navn: <b>%{name_tag}</b> Antal: <b>%{count_tag}</b>"
+      tag_name: "Tag navn: %{name_tag} Antal: %{count_tag}"
       usage_statistic: "Bruger statistik"
       users:
         one: "%{count} bruger"
@@ -219,6 +219,7 @@ da:
       updating: "Opdaterer"
     index:
       donate: "Doner"
+      donate_liberapay: "Doner til Liberapay"
       help:
         any_problem: "Problemer?"
         contact_podmin: "Kontakt din pods administrator!"
@@ -980,7 +981,7 @@ da:
     comment_label: "<b>Kommentar</b>: %{data}"
     confirm_deletion: "Er du sikker på at du vil slette det valgte?"
     delete_link: "Slet det valgte"
-    not_found: "<u>Indlægget/kommentaren blev ikke fundet. Det ser ud til at være blevet slettet af brugeren!</u>"
+    not_found: "Indlægget/kommentaren blev ikke fundet. Det ser ud til at være blevet slettet af brugeren!"
     post_label: "<b>Indlæg</b>: %{content}"
     reason_label: "Begrundelse:"
     reported_label: "<b>Indrapporteret af</b> %{person}"
@@ -1066,7 +1067,6 @@ da:
       posting: "Sender ..."
       remove_location: "Fjern placering"
       share: "Del"
-      upload_photos: "Upload fotos"
       whats_on_your_mind: "Hvad har du på hjertet?"
     stream_element:
       via: "Via %{link}"
@@ -1094,8 +1094,6 @@ da:
     total_users: "Antal brugere"
     version: "Version"
   status_messages:
-    create:
-      success: "%{names} nævnt med succes"
     new:
       mentioning: "Nævnt: %{person}"
     too_long: "Lav venligst en statusopdatering på under %{count} tegn. Lige nu er der %{current_length} tegn."
@@ -1111,6 +1109,8 @@ da:
     aspects_stream: "Aspekter"
     comment_stream:
       title: "Kommenterede indlæg"
+    commented:
+      title: "Kommenterede inlæg"
     community_spotlight_stream: "Community Spotlight"
     followed_tag:
       add_a_tag: "Tilføj et tag"
@@ -1120,6 +1120,8 @@ da:
     followed_tags_stream: "#Fulgte tags"
     like_stream:
       title: "'Synes om' strøm"
+    liked:
+      title: "Indlæg nogen syntes om"
     mentioned_stream: "@Omtaler"
     mentions:
       title: "Dine omtaler"

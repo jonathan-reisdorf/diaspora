@@ -1,3 +1,71 @@
+# 0.6.6.0
+
+## Refactor
+* Remove rails\_admin [#7440](https://github.com/diaspora/diaspora/pull/7440)
+* Use guid instead of id at permalink and in SPV [#7453](https://github.com/diaspora/diaspora/pull/7453)
+
+## Bug fixes
+* Make photo upload button hover text translatable [#7429](https://github.com/diaspora/diaspora/pull/7429)
+* Fix first comment in mobile view with french locale [#7441](https://github.com/diaspora/diaspora/pull/7441)
+* Use post page title and post author in atom feed [#7420](https://github.com/diaspora/diaspora/pull/7420)
+* Handle broken public keys when receiving posts [#7448](https://github.com/diaspora/diaspora/pull/7448)
+* Fix welcome message when podmin is set to an invalid username [#7452](https://github.com/diaspora/diaspora/pull/7452)
+
+## Features
+
+* Add support for Nodeinfo 2.0 [#7447](https://github.com/diaspora/diaspora/pull/7447)
+
+# 0.6.5.0
+
+## Refactor
+* Remove unused setPreload function [#7354](https://github.com/diaspora/diaspora/pull/7354)
+* Remove jQuery deprecations [#7356](https://github.com/diaspora/diaspora/pull/7356)
+* Use empty selector where "#" was used as a selector before (prepare jQuery 3 upgrade) [#7372](https://github.com/diaspora/diaspora/pull/7372)
+* Increase maximal height of large thumbnail on mobile [#7383](https://github.com/diaspora/diaspora/pull/7383)
+* Reduce conversation recipient size [#7376](https://github.com/diaspora/diaspora/pull/7376)
+* Cleanup rtl css [#7374](https://github.com/diaspora/diaspora/pull/7374)
+* Increase visual spacing between list items [#7401](https://github.com/diaspora/diaspora/pull/7401)
+* Remove unused gem and cucumber step [#7410](https://github.com/diaspora/diaspora/pull/7410)
+* Disable CSP header when `report_only` and no `report_uri` is set [#7367](https://github.com/diaspora/diaspora/pull/7367)
+
+## Bug fixes
+* Don't hide posts when blocking someone from the profile [#7379](https://github.com/diaspora/diaspora/pull/7379)
+* Disable autocomplete for the conversation form recipient input [#7375](https://github.com/diaspora/diaspora/pull/7375)
+* Fix sharing indicator on profile page for blocked users [#7382](https://github.com/diaspora/diaspora/pull/7382)
+* Remove post only after a successful deletion on the server [#7385](https://github.com/diaspora/diaspora/pull/7385)
+* Fix an issue where pod admins could get logged out when using sidekiq-web [#7395](https://github.com/diaspora/diaspora/pull/7395)
+* Add avatar fallback for typeahead and conversations [#7414](https://github.com/diaspora/diaspora/pull/7414)
+
+## Features
+* Add links to liked and commented pages [#5502](https://github.com/diaspora/diaspora/pull/5502)
+
+# 0.6.4.1
+
+Fixes a possible Remote Code Execution ([CVE-2016-4658](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-4658)) and a possible DoS ([CVE-2016-5131](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-5131)) by updating Nokogiri, which in turn updates libxml2.
+
+# 0.6.4.0
+
+## Refactor
+* Unify link colors [#7318](https://github.com/diaspora/diaspora/pull/7318)
+* Increase time to wait before showing the hovercard [#7319](https://github.com/diaspora/diaspora/pull/7319)
+* Remove some unused color-theme overrides [#7325](https://github.com/diaspora/diaspora/pull/7325)
+* Change color of author-name on hover [#7326](https://github.com/diaspora/diaspora/pull/7326)
+* Add like and reshare services [#7337](https://github.com/diaspora/diaspora/pull/7337)
+
+## Bug fixes
+* Fix path to `bundle` in `script/server` [#7281](https://github.com/diaspora/diaspora/pull/7281)
+* Update comment in database example config [#7282](https://github.com/diaspora/diaspora/pull/7282)
+* Make the \#newhere post public again [#7311](https://github.com/diaspora/diaspora/pull/7311)
+* Remove whitespace from author link [#7330](https://github.com/diaspora/diaspora/pull/7330)
+* Fix autosize in modals [#7339](https://github.com/diaspora/diaspora/pull/7339)
+* Only display invite link on contacts page if invitations are enabled [#7342](https://github.com/diaspora/diaspora/pull/7342)
+* Fix regex for hashtags for some languages [#7350](https://github.com/diaspora/diaspora/pull/7350)
+* Create asterisk.png without digest after precompile [#7322](https://github.com/diaspora/diaspora/pull/7322)
+
+## Features
+* Add support for [Liberapay](https://liberapay.com) donations [#7290](https://github.com/diaspora/diaspora/pull/7290)
+* Added a link to the community guidelines :) [#7298](https://github.com/diaspora/diaspora/pull/7298)
+
 # 0.6.3.0
 
 ## Refactor
