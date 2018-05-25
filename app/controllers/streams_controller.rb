@@ -5,7 +5,7 @@
 #   the COPYRIGHT file.
 
 class StreamsController < ApplicationController
-  before_action :authenticate_user!
+  before_action :authenticate_user!, except: :public
   before_action :save_selected_aspects, :only => :aspects
 
   layout proc { request.format == :mobile ? "application" : "with_header" }
@@ -30,7 +30,12 @@ class StreamsController < ApplicationController
   end
 
   def multi
-    gon.preloads[:getting_started] = current_user.getting_started
+    if current_user.getting_started
+      gon.preloads[:getting_started] = true
+      inviter = current_user.invited_by.try(:person)
+      gon.preloads[:mentioned_person] = {name: inviter.name, handle: inviter.diaspora_handle} if inviter
+    end
+
     stream_responder(Stream::Multi)
   end
 
