@@ -90,15 +90,18 @@ ia:
       week: "Septimana"
     user_entry:
       account_closed: "Conto claudite"
+      admin: "Administrator"
       diaspora_handle: "ID de diaspora*"
       email: "E-mail"
       guid: "GUID"
       id: "ID"
       invite_token: "Indicio de invitation"
       last_seen: "Ultime session"
+      moderator: "Moderator"
       ? "no"
       : "No"
       nsfw: "#nsfw"
+      spotlight: "In evidentia"
       unknown: "Incognite"
       ? "yes"
       : Si
@@ -106,14 +109,29 @@ ia:
       account_closing_scheduled: "Le conto de %{name} es planate a esser claudite. Illo essera processate in alcun momentos…"
       account_locking_scheduled: "Le conto de %{name} es planate a esser blocate. Illo essera processate in alcun momentos…"
       account_unlocking_scheduled: "Le conto de %{name} es planate a esser disblocate. Illo essera processate in alcun momentos…"
+      add_admin: "%{name} ha essite facite administrator."
       add_invites: "Adder invitationes"
+      add_moderator: "%{name} ha essite facite moderator."
+      add_spotlight: "%{name} ha essite addite a \"Usatores in evidentia\"."
       are_you_sure: "Es tu secur de voler clauder iste conto?"
       are_you_sure_lock_account: "Es tu secur de voler blocar iste conto?"
       are_you_sure_unlock_account: "Es tu secur de voler disblocar iste conto?"
       close_account: "Clauder conto"
+      delete_admin: "%{name} ha essite removite del lista de administratores."
+      delete_moderator: "%{name} ha essite removite del lista de moderatores."
+      delete_spotlight: "%{name} ha essite removite de \"Usatores in evidentia\"."
+      does_not_exist: "Usator non existe!"
       email_to: "Adresse de e-mail a invitar"
       invite: "Invitar"
       lock_account: "Blocar conto"
+      make_admin: "Facer administrator"
+      make_moderator: "Facer moderator"
+      make_spotlight: "Adder a \"Usatores in evidentia\""
+      remove_admin: "Remover como administrator"
+      remove_moderator: "Remover como moderator"
+      remove_spotlight: "Remover de \"Usatores in evidentia\""
+      role_implemented: "%{name} ha jam recipite iste rolo!"
+      role_removal_implemented: "%{name} ha jam essite removite de iste rolo!"
       under_13: "Monstrar usatores con minus de 13 annos (COPPA)"
       unlock_account: "Disblocar conto"
       users:
@@ -575,9 +593,11 @@ ia:
       byline: "Le mundo social in linea ubi tu ha le controlo"
       choose_your_audience: "Elige tu audientia"
       choose_your_audience_info: "Le \"aspectos\" de diaspora* permitte divider cosas solmente con le personas appropriate. Tu pote scriber in publico o si privatemente como tu vole. Divide un photo amusante con tote le mundo, o divide un secreto personal con tu amicos intime. Le controlo es tue."
+      diaspora_site_link: "rete federate de diaspora*"
       headline: "Benvenite a %{pod_name}"
       own_your_data: "Possede tu datos"
       own_your_data_info: "Multe retes usa tu datos pro ganiar moneta analysante tu interactiones e usante iste information pro diriger publicitate a te. diaspora* non usa tu datos pro alcun scopo, salvo illo de permitter te de connecter e divider cosas con altere personas."
+      part_of_diaspora: "Parte del %{diaspora_site_link}"
     podmin:
       byline: "Tu es sur le puncto de cambiar le facie de Internet. Preste a comenciar?"
       configuration_info: "Aperi %{database_path} e %{diaspora_path} in tu editor de texto preferite e revide los meticulosemente; illos ha commentos extense."
@@ -766,7 +786,7 @@ ia:
       body: |-
           Hallo %{name},
 
-          Le tue datos personal ha essite processate e preparate pro discargamento. Pro discargar, seque [iste ligamine](%{url}).
+          Le archivo de tu datos personal ha essite preparate pro discargamento via [iste ligamine](%{url}).
 
           Amicalmente,
 
@@ -946,7 +966,7 @@ ia:
     edit:
       allow_search: "Permitter que on te cerca in diaspora*"
       basic: "Mi profilo basic"
-      basic_hint: "Cata elemento de profilo es facultative. Le profilo basic es sempre visibile pro le publico."
+      basic_hint: "Cata elemento de tu profilo es optional. Le profilo basic es sempre visibile pro le publico."
       extended: "Mi profilo extendite"
       extended_hint: "Clicca sur le commutator pro definir le visibilitate de tu profilo extendite. \"Public\" vole dicer que illo es visibile pro tote le internet, \"limitate\" vole dicer que solmente le personas in tu aspectos de contacto videra iste information."
       extended_visibility_text: "Visibilitate de tu profilo extendite:"
@@ -972,7 +992,11 @@ ia:
       updated: "Profilo actualisate"
   public: "Public"
   registrations:
-    closed: "Le creation de contos es claudite in iste pod de diaspora*."
+    closed:
+      another_pod: "un altere pod"
+      closed_pod: "Iste pod es actualmente claudite pro le creation de contos, ma tu pote totevia adherer al rete de diaspora* per inscriber te a %{wiki}. Post que tote le pods es interconnectite, tu potera acceder al mesme contento."
+      find_pods: "Un lista de pods ubi tu pote inscriber te se trova a %{poduptime}."
+      other_questions: "Si tu ha altere questiones sur le election de un pod, consulta nostre %{wiki}."
     create:
       success: "Tu ha adherite a diaspora*!"
     invalid_invite: "Le ligamine de invitation que tu ha fornite non plus es valide."
@@ -1030,9 +1054,9 @@ ia:
       connect: "Connecter"
       disconnect: "Disconnecter"
       edit_services: "Modificar servicios"
-      logged_in_as: "In session como %{nickname}."
+      logged_in_as: "Connectite como %{nickname}."
       no_services_available: "Il non ha servicios disponibile in iste pod."
-      not_logged_in: "Nulle session aperte in iste momento."
+      not_logged_in: "Non connectite."
       really_disconnect: "Disconnecter %{service}?"
       services_explanation: "Le connexion a altere servicios da le possibilitate de publicar tu messages anque in illos quando tu los scribe in diaspora*."
       share_to: "Divider sur %{provider}"
@@ -1159,6 +1183,41 @@ ia:
         one: "1 persona con etiquetta %{tag}"
         other: "%{count} personas con etiquetta %{tag}"
         zero: "Nemo con etiquetta %{tag}"
+  two_factor_auth:
+    activated:
+      change_button: "Disactivar"
+      change_label: "Disactiva le authentication bifactorial per entrar tu contrasigno"
+      status: "Authentication bifactorial activate"
+    confirm:
+      activate_button: "Confirmar e activar"
+      input_explanation: "Post scannar o entrar le secreto, entra le codice a sex digitos que tu vide e confirma le activation."
+      input_title: "Confirmar con codice TOTP"
+      manual_explanation: "Si tu non succede a scannar automaticamente le codice QR, tu pote manualmente entrar le secreto in tu application."
+      manual_explanation_cont: "Nos usa \"time-based one-time passwords\" (TOTP, contrasignos temporal a uso unic) con codices a sex digitos. Si tu application te demanda un intervallo de tempore e un algorithmo, responde 30 secundas e sha1, respectivemente.<br />Le spatios es solmente pro lectura facile; per favor, entra le codice sin spatios."
+      scan_explanation: "Per favor, scanna le codice QR con un application con capabilitate TOTP, como andOTP (Android), FreeOTP (iOS), SailOTP (SailfishOS)."
+      scan_title: "Scannar le codice QR"
+      status: "Le authentication bifactorial non es ancora activate completemente. Tu debe confirmar le activation con un codice TOTP."
+      title: "Confirmar activation"
+    deactivated:
+      change_button: "Activar"
+      change_label: "Activar authentication bifactorial"
+      status: "Authentication bifactorial non activate"
+    explanation: "Le authentication bifactorial es un maniera efficace de assecurar que tu es le unic persona que pote aperir session in tu conto. Quando tu aperi session, tu entrara un codice a 6 digitos accompaniante tu contrasigno pro provar tu identitate. Ma sia caute: si tu perde tu telephono e le codices de recuperation create quando tu activa iste function, le accesso a tu conto de diaspora* essera perdite pro sempre."
+    flash:
+      error_token: "Le codice es incorrecte o invalide"
+      success_activation: "Le activation del authentication bifactorial ha succedite"
+      success_deactivation: "Le disactivation del authentication bifactorial ha succedite"
+    input_token:
+      label: "Codice bifactorial"
+      placeholder: "codice bifactorial a sex digitos"
+    recovery:
+      button: "Generar nove codices de recuperation"
+      explanation: "Si tu jammais perde le accesso a tu telephono, tu pote usar un del codices de recuperation sequente pro reganiar le accesso a tu conto. Mantene le codices de recuperation ben secur. Per exemplo, tu pote imprimer los e guardar los con altere documentos importante."
+      explanation_short: "Le codices de recuperation te permitte reganiar le accesso a tu conto si tu perde tu telephono. Nota ben que tu pote usar cata codice de recuperation solmente un vice."
+      invalidation_notice: "Si tu perde tu codices de recuperation, tu pote generar alteres hic. Le ancian codices de recuperation devenira invalide."
+      reminder: "Alternativemente, tu pote usar un del codices de recuperation."
+      title: "Codices de recuperation"
+    title: "Authentication bifactorial"
   username: "Nomine de usator"
   users:
     confirm_email:
@@ -1197,7 +1256,7 @@ ia:
       edit_account: "Modificar conto"
       email_awaiting_confirmation: "Nos te ha inviate un ligamine de activation al adresse %{unconfirmed_email}. Usque al momento que tu seque iste ligamine pro activar le nove adresse, nos va continuar a usar tu adresse original %{email}."
       export_data: "Exportar datos"
-      export_in_progress: "Le datos personal tue es actualmente sub preparation. Per favor, reveni in alcun momentos."
+      export_in_progress: "Nos prepara in iste momento un archivo de tu datos personal. Per favor, reveni in alcun momentos."
       export_photos_in_progress: "Le tractamento de tu photos non ha ancora terminate. Per favor, essaya lo de novo in qualque momentos."
       following: "Configuration de divider"
       last_exported_html: "(Ultime actualisation %{timeago})"
@@ -1207,8 +1266,9 @@ ia:
       new_password: "Contrasigno nove"
       private_message: "tu recipe un message private"
       protocol_handler:
-        description: "Un clic sur iste button demandara a tu navigator web de installar un gestor que permitte a nos de aperir le adresses URL web+diaspora:// sur tu pod principal. Isto es ancora experimental e le interactiones dependera de tu navigator web specific."
-        register: "Registrar"
+        browser: "Iste protocollo es actualmente in le stadio experimental e le successo del interactiones que lo usa dependera de tu navigator del web. Si tu vole modificar o remover iste gestor, tu debe facer lo via le configuration de tu navigator. Le button hic infra essera sempre activate, e tu debera configurar le gestor separatemente in cata navigator que tu usa."
+        description: "web+diaspora:// es un nove protocollo web que nos ha introducite. Omne ligamine a un pagina diaspora* sur un sito web externe que usa iste protocollo pote esser aperite in le pod que alberga tu conto diaspora*. Clicca sur le button hic infra pro facer que tu navigator del web usa %{pod_url} pro recognoscer le ligamines web+diaspora:// externe."
+        register: "Registrar le gestor web+diaspora:// sur iste navigator"
         title: "Gestor de protocollo web+diaspora://"
       receive_email_notifications: "Reciper notificationes per e-mail quando:"
       request_export: "Requestar le datos de mi profilo"
